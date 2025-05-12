@@ -12,7 +12,6 @@ import model.Tipo;
 
 public class Sistema {
     
-    // Método para autenticar o usuário
     public Usuario autenticarUsuario(String email, String senha) {
     String sql = "SELECT * FROM usuarios WHERE email = ? AND senha_hash = ?";
 
@@ -29,7 +28,7 @@ public class Sistema {
             usuario.setIdUsuario(rs.getInt("id_usuario"));
             usuario.setNome(rs.getString("nome"));
             usuario.setEmail(rs.getString("email"));
-            // Pode carregar mais dados do usuário aqui, como tipo etc.
+            // lista de dados, adicionar aqui
             return usuario;
         }
     } catch (SQLException e) {

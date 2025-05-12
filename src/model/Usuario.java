@@ -9,7 +9,7 @@ public class Usuario {
     private String nome;
     private String email;
     private String senhaHash;
-    private Tipo tipo;  // Alterado para Tipo
+    private Tipo tipo;
     private List<Competencia> competencia;
 
     public void login(String email, String senhaHash) {
@@ -22,20 +22,20 @@ public class Usuario {
         this.senhaHash = "";
     }
 
-    public void adicionarCompetencia(List<Competencia> competencias) {  // Corrigido nome do método
-        this.competencia.addAll(competencias);  // Adiciona as competências corretamente
+    public void adicionarCompetencia(List<Competencia> competencias) {
+        this.competencia.addAll(competencias);
     }
 
     public void removerCompetencia(List<Competencia> competencias) {
-        this.competencia.removeAll(competencias);  // Remove as competências corretamente
+        this.competencia.removeAll(competencias);
     }
 
     public void listarCompetencia() {
-        // Lógica para listar as competências
+        
     }
 
     public void isLider() {
-        // Verifica se o usuário é líder
+        
     }
 
     public void recuperarSenha(String senha) {

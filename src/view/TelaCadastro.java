@@ -194,14 +194,14 @@ public class TelaCadastro extends javax.swing.JFrame {
         // Gerar hash da senha
         String senhaHash = HashUtil.gerarHash(senha);
 
-        // Inserir no banco
+        // cadastro no banco
         try (Connection conexao = Database.getConnection()) {
             String sql = "INSERT INTO usuarios (nome, email, senha_hash, id_tipo) VALUES (?, ?, ?, ?)";
             PreparedStatement stmt = conexao.prepareStatement(sql);
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.setString(3, senhaHash);
-            stmt.setInt(4, 1); // tipo = 1 (funcionário padrão)
+            stmt.setInt(4, 1); // padrão 1 para funcionario, lider sera colocado maualmente no bd com tipo 2
 
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!");
@@ -218,7 +218,7 @@ public class TelaCadastro extends javax.swing.JFrame {
         new TelaLogin().setVisible(true);
         dispose();
         });
-        timer.setRepeats(false); // só executa uma vez
+        timer.setRepeats(false); // só uma execução
         timer.start();
     }//GEN-LAST:event_btnVoltarActionPerformed
 

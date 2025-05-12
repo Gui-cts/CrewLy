@@ -125,7 +125,7 @@ public class TelaLogin extends javax.swing.JFrame {
         if (usuario != null) {
         // Login bem-sucedido
         JOptionPane.showMessageDialog(this, "Login realizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-        // Aqui você pode redirecionar para uma nova tela, por exemplo:
+        // para o futuro, quando o login for bem sucedido seguir o passo abaixo
         // new TelaPrincipal(usuario).setVisible(true);
         this.dispose();  // Fechando a tela de login
     } else {
