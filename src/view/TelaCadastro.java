@@ -196,12 +196,13 @@ public class TelaCadastro extends javax.swing.JFrame {
 
         // cadastro no banco
         try (Connection conexao = Database.getConnection()) {
-            String sql = "INSERT INTO usuarios (nome, email, senha_hash, id_tipo) VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO usuarios (nome, email, senha_hash, id_tipo, consentimento_lgpd) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement stmt = conexao.prepareStatement(sql);
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.setString(3, senhaHash);
             stmt.setInt(4, 1); // padrão 1 para funcionario, lider sera colocado maualmente no bd com tipo 2
+            stmt.setBoolean(5, true); // consentimento LGPD aceito
 
             stmt.executeUpdate();
             JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!");

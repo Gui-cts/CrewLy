@@ -8,33 +8,78 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 import model.Tipo;
+import utils.EmailSender;
+import utils.TokenUtil;
 
 public class Sistema {
-    
+
     public Usuario autenticarUsuario(String email, String senha) {
-    String sql = "SELECT * FROM usuarios WHERE email = ? AND senha_hash = ?";
+        String sql = "SELECT * FROM usuarios WHERE email = ? AND senha_hash = ?";
 
-    try (Connection conn = Database.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        stmt.setString(1, email);
-        stmt.setString(2, HashUtil.gerarHash(senha));  // Gera hash da senha diretamente aqui
+            stmt.setString(1, email);
+            stmt.setString(2, HashUtil.gerarHash(senha));  // Gera hash da senha diretamente aqui
 
-        ResultSet rs = stmt.executeQuery();
+            ResultSet rs = stmt.executeQuery();
 
-        if (rs.next()) {
-            Usuario usuario = new Usuario();
-            usuario.setIdUsuario(rs.getInt("id_usuario"));
-            usuario.setNome(rs.getString("nome"));
-            usuario.setEmail(rs.getString("email"));
-            // lista de dados, adicionar aqui
-            return usuario;
+            if (rs.next()) {
+                Usuario usuario = new Usuario();
+                usuario.setIdUsuario(rs.getInt("id_usuario"));
+                usuario.setNome(rs.getString("nome"));
+                usuario.setEmail(rs.getString("email"));
+                // lista de dados, adicionar aqui
+                return usuario;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return null;
     }
-    return null;
-}
+
+    public void solicitarRedefinicaoSenha(String email) {
+        String token = TokenUtil.gerarToken();
+        TokenUtil.salvarTokenNoBanco(email, token);
+        EmailSender.enviarToken(email, token);
+    }
+
+    public String gerarTokenRecuperacao(String email) {
+        try (Connection conn = Database.getConnection()) {
+            String sql = "SELECT * FROM usuarios WHERE email = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String token = gerarToken(); // Gera o token
+                EmailSender.enviarToken(email, token); // Envia o token por e-mail
+                return token;  // Retorna o token para ser validado posteriormente
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private String gerarToken() {
+        return String.valueOf((int) (Math.random() * 900000) + 100000); // ex: 6 dígitos
+    }
+
+    public boolean redefinirSenha(String email, String novaSenha) {
+        try (Connection conn = Database.getConnection()) {
+            String hashSenha = HashUtil.gerarHash(novaSenha); // ou use sua lógica de hash
+            String sql = "UPDATE usuarios SET senha_hash = ? WHERE email = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, hashSenha);
+            stmt.setString(2, email);
+            int rows = stmt.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 }

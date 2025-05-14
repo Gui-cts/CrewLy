@@ -7,8 +7,7 @@ package view;
 import model.Usuario;
 import controller.Sistema;
 import javax.swing.JOptionPane;
-
-
+import view.TelaCadastro;
 
 /**
  *
@@ -24,12 +23,9 @@ public class TelaLogin extends javax.swing.JFrame {
     public TelaLogin() {
         initComponents();
         sistema = new Sistema();
-        setSize(1440, 1024); 
+        setSize(1440, 1024);
         setResizable(false); // Impede redimensionamento
         setLocationRelativeTo(null); // Centraliza na tela
-        
-
-
 
     }
 
@@ -99,6 +95,11 @@ public class TelaLogin extends javax.swing.JFrame {
         btnEsqueciSenha.setContentAreaFilled(false);
         btnEsqueciSenha.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnEsqueciSenha.setOpaque(false);
+        btnEsqueciSenha.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEsqueciSenhaActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnEsqueciSenha, new org.netbeans.lib.awtextra.AbsoluteConstraints(845, 620, 180, 20));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/design/login_crewly.jpg"))); // NOI18N
@@ -121,29 +122,90 @@ public class TelaLogin extends javax.swing.JFrame {
         String email = txtEmail.getText();
         String senha = new String(txtSenha.getPassword());
         Usuario usuario = sistema.autenticarUsuario(email, senha);
-        
+
         if (usuario != null) {
-        // Login bem-sucedido
-        JOptionPane.showMessageDialog(this, "Login realizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-        // para o futuro, quando o login for bem sucedido seguir o passo abaixo
-        // new TelaPrincipal(usuario).setVisible(true);
-        this.dispose();  // Fechando a tela de login
-    } else {
-        // Login falhou
-        JOptionPane.showMessageDialog(this, "Email ou senha incorretos.", "Erro", JOptionPane.ERROR_MESSAGE);
-    }
+            // Login bem-sucedido
+            JOptionPane.showMessageDialog(this, "Login realizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            // para o futuro, quando o login for bem sucedido seguir o passo abaixo
+            // new TelaPrincipal(usuario).setVisible(true);
+            this.dispose();  // Fechando a tela de login
+        } else {
+            // Login falhou
+            JOptionPane.showMessageDialog(this, "Email ou senha incorretos.", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnLoginActionPerformed
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
         javax.swing.Timer timer = new javax.swing.Timer(200, e -> {
-        new TelaCadastro().setVisible(true);
-        dispose();
+            new TelaCadastro().setVisible(true);
+            dispose();
         });
         timer.setRepeats(false); // só executa uma vez
         timer.start();
     }//GEN-LAST:event_btnCadastrarActionPerformed
+
+    private void btnEsqueciSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEsqueciSenhaActionPerformed
+        // TODO add your handling code here:
+        String email = null;
+        String token = null;
+
+        // Loop para digitar um e-mail válido e que exista no sistema
+        while (true) {
+            email = JOptionPane.showInputDialog(this, "Digite seu e-mail:");
+            if (email == null || email.trim().isEmpty()) {
+                return; // usuário cancelou
+            }
+
+            token = sistema.gerarTokenRecuperacao(email);
+            if (token != null) {
+                break; // e-mail válido e token enviado com sucesso
+            } else {
+                JOptionPane.showMessageDialog(this, "E-mail não encontrado ou erro no envio. Tente novamente.");
+            }
+        }
+
+        JOptionPane.showMessageDialog(this, "Um token foi enviado para seu e-mail.");
+
+        // Loop para digitar o token corretamente
+        while (true) {
+            String tokenInformado = JOptionPane.showInputDialog(this, "Digite o token recebido no e-mail:");
+            if (tokenInformado == null) {
+                return; // usuário cancelou
+            }
+
+            if (tokenInformado.equals(token)) {
+                break; // token correto
+            } else {
+                JOptionPane.showMessageDialog(this, "Token inválido. Tente novamente ou clique em Cancelar para sair.");
+            }
+        }
+
+        // Loop para garantir que a nova senha siga o padrão exigido
+        String novaSenha;
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
+        while (true) {
+            novaSenha = JOptionPane.showInputDialog(this, "Digite a nova senha:");
+            if (novaSenha == null || novaSenha.trim().isEmpty()) {
+                return; // usuário cancelou
+            }
+
+            if (!novaSenha.matches(regex)) {
+                JOptionPane.showMessageDialog(this,
+                        "A senha deve ter no mínimo 8 caracteres, com pelo menos:\n- 1 letra minúscula\n- 1 letra maiúscula\n- 1 número\n- 1 caractere especial (@#$%^&+=!)");
+            } else {
+                break; // senha válida
+            }
+        }
+
+        boolean sucesso = sistema.redefinirSenha(email, novaSenha);
+        if (sucesso) {
+            JOptionPane.showMessageDialog(this, "Senha atualizada com sucesso!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Erro ao atualizar a senha.");
+        }
+    }//GEN-LAST:event_btnEsqueciSenhaActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCadastrar;
