@@ -39,12 +39,6 @@ public class Sistema {
         return null;
     }
 
-    public void solicitarRedefinicaoSenha(String email) {
-        String token = TokenUtil.gerarToken();
-        TokenUtil.salvarTokenNoBanco(email, token);
-        EmailSender.enviarToken(email, token);
-    }
-
     public String gerarTokenRecuperacao(String email) {
         try (Connection conn = Database.getConnection()) {
             String sql = "SELECT * FROM usuarios WHERE email = ?";
@@ -53,18 +47,15 @@ public class Sistema {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                String token = gerarToken(); // Gera o token
-                EmailSender.enviarToken(email, token); // Envia o token por e-mail
-                return token;  // Retorna o token para ser validado posteriormente
+                String token = TokenUtil.gerarToken(); // ✅ Gera token UUID
+                TokenUtil.salvarTokenNoBanco(email, token); // ✅ Salva no banco
+                EmailSender.enviarToken(email, token); // ✅ Envia por e-mail
+                return token;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private String gerarToken() {
-        return String.valueOf((int) (Math.random() * 900000) + 100000); // ex: 6 dígitos
     }
 
     public boolean redefinirSenha(String email, String novaSenha) {
@@ -80,6 +71,14 @@ public class Sistema {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public boolean validarToken(String email, String token) {
+        return TokenUtil.validarToken(email, token);
+    }
+
+    public void removerToken(String email) {
+        TokenUtil.removerToken(email);
     }
 
 }

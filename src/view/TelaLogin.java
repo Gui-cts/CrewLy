@@ -146,65 +146,75 @@ public class TelaLogin extends javax.swing.JFrame {
         timer.start();
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
-    private void btnEsqueciSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEsqueciSenhaActionPerformed
-        // TODO add your handling code here:
-        String email = null;
-        String token = null;
-
-        // Loop para digitar um e-mail válido e que exista no sistema
+    private String solicitarEmailValido() {
         while (true) {
-            email = JOptionPane.showInputDialog(this, "Digite seu e-mail:");
+            String email = JOptionPane.showInputDialog(this, "Digite seu e-mail:");
             if (email == null || email.trim().isEmpty()) {
-                return; // usuário cancelou
+                return null;
             }
 
-            token = sistema.gerarTokenRecuperacao(email);
+            String token = sistema.gerarTokenRecuperacao(email);
             if (token != null) {
-                break; // e-mail válido e token enviado com sucesso
+                return email;
             } else {
                 JOptionPane.showMessageDialog(this, "E-mail não encontrado ou erro no envio. Tente novamente.");
             }
         }
+    }
 
-        JOptionPane.showMessageDialog(this, "Um token foi enviado para seu e-mail.");
-
-        // Loop para digitar o token corretamente
+    private boolean verificarToken(String email) {
         while (true) {
             String tokenInformado = JOptionPane.showInputDialog(this, "Digite o token recebido no e-mail:");
             if (tokenInformado == null) {
-                return; // usuário cancelou
+                return false;
             }
 
-            if (tokenInformado.equals(token)) {
-                break; // token correto
+            if (sistema.validarToken(email, tokenInformado)) {
+                sistema.removerToken(email); // limpa após uso
+                return true;
             } else {
                 JOptionPane.showMessageDialog(this, "Token inválido. Tente novamente ou clique em Cancelar para sair.");
             }
         }
+    }
 
-        // Loop para garantir que a nova senha siga o padrão exigido
-        String novaSenha;
+    private String solicitarNovaSenha() {
         String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
         while (true) {
-            novaSenha = JOptionPane.showInputDialog(this, "Digite a nova senha:");
+            String novaSenha = JOptionPane.showInputDialog(this, "Digite a nova senha:");
             if (novaSenha == null || novaSenha.trim().isEmpty()) {
-                return; // usuário cancelou
+                return null;
             }
 
             if (!novaSenha.matches(regex)) {
                 JOptionPane.showMessageDialog(this,
                         "A senha deve ter no mínimo 8 caracteres, com pelo menos:\n- 1 letra minúscula\n- 1 letra maiúscula\n- 1 número\n- 1 caractere especial (@#$%^&+=!)");
             } else {
-                break; // senha válida
+                return novaSenha;
             }
+        }
+    }
+
+    private void btnEsqueciSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEsqueciSenhaActionPerformed
+        // TODO add your handling code here:
+        String email = solicitarEmailValido();
+        if (email == null) {
+            return;
+        }
+
+        JOptionPane.showMessageDialog(this, "Um token foi enviado para seu e-mail.");
+
+        if (!verificarToken(email)) {
+            return;
+        }
+
+        String novaSenha = solicitarNovaSenha();
+        if (novaSenha == null) {
+            return;
         }
 
         boolean sucesso = sistema.redefinirSenha(email, novaSenha);
-        if (sucesso) {
-            JOptionPane.showMessageDialog(this, "Senha atualizada com sucesso!");
-        } else {
-            JOptionPane.showMessageDialog(this, "Erro ao atualizar a senha.");
-        }
+        JOptionPane.showMessageDialog(this, sucesso ? "Senha atualizada com sucesso!" : "Erro ao atualizar a senha.");
     }//GEN-LAST:event_btnEsqueciSenhaActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
