@@ -17,7 +17,7 @@ public class EmailSender {
                      + "Copie e cole este token no campo de redefinição no aplicativo.\n"
                      + "Este token é válido por 30 minutos.";
 
-        // Configurações do servidor SMTP
+        // Configurações do servidor SMTP do gmail
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");

@@ -170,7 +170,7 @@ public class TelaLogin extends javax.swing.JFrame {
             }
 
             if (sistema.validarToken(email, tokenInformado)) {
-                sistema.removerToken(email); // limpa após uso
+                sistema.removerToken(email);
                 return true;
             } else {
                 JOptionPane.showMessageDialog(this, "Token inválido. Tente novamente ou clique em Cancelar para sair.");

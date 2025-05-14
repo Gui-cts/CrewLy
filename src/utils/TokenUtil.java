@@ -21,7 +21,7 @@ public class TokenUtil {
     public static void salvarTokenNoBanco(String email, String token) {
         String sql = "INSERT INTO tokens_redefinicao (email, token, data_expiracao) VALUES (?, ?, ?)";
         
-        // Define a expiração para 30 minutos a partir de agora
+        // Define a expiração para 30 minutos
         LocalDateTime expiracao = LocalDateTime.now().plusMinutes(30);
         String dataExpiracaoFormatada = expiracao.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 

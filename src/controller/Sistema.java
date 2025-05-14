@@ -60,7 +60,7 @@ public class Sistema {
 
     public boolean redefinirSenha(String email, String novaSenha) {
         try (Connection conn = Database.getConnection()) {
-            String hashSenha = HashUtil.gerarHash(novaSenha); // ou use sua lógica de hash
+            String hashSenha = HashUtil.gerarHash(novaSenha); 
             String sql = "UPDATE usuarios SET senha_hash = ? WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, hashSenha);
