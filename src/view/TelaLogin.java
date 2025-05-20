@@ -128,6 +128,12 @@ public class TelaLogin extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Login realizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             // para o futuro, quando o login for bem sucedido seguir o passo abaixo
             // new TelaPrincipal(usuario).setVisible(true);
+            if (usuario.getIdTipo() == 1) { // 1 = funcionário
+                new MenuFuncionario(usuario).setVisible(true);
+            /*} else if (usuario.getIdTipo() == 2) { // 2 = líder
+                new TelaLider(usuario).setVisible(true); */
+            }
+
             this.dispose();  // Fechando a tela de login
         } else {
             // Login falhou

@@ -209,6 +209,8 @@ public class TelaCadastro extends javax.swing.JFrame {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Erro ao cadastrar: " + e.getMessage());
         }
+        new TelaLogin().setVisible(true);
+            dispose();
 
     }//GEN-LAST:event_btnCadastroActionPerformed
 

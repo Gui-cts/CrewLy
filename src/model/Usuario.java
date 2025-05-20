@@ -5,11 +5,12 @@ import java.util.List;
 import utils.HashUtil;
 
 public class Usuario {
+
     private int idUsuario;
     private String nome;
     private String email;
     private String senhaHash;
-    private Tipo tipo;
+    private int idTipo;
     private List<Competencia> competencia;
 
     public void login(String email, String senhaHash) {
@@ -31,11 +32,11 @@ public class Usuario {
     }
 
     public void listarCompetencia() {
-        
+
     }
 
     public void isLider() {
-        
+
     }
 
     public void recuperarSenha(String senha) {
@@ -74,12 +75,12 @@ public class Usuario {
         this.senhaHash = senhaHash;
     }
 
-    public Tipo getTipo() {
-        return tipo;
+    public int getIdTipo() {
+        return idTipo;
     }
 
-    public void setTipo(Tipo tipo) {
-        this.tipo = tipo;
+    public void setIdTipo(int idTipo) {
+        this.idTipo = idTipo;
     }
 
     public List<Competencia> getCompetencia() {

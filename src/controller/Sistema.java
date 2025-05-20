@@ -30,6 +30,7 @@ public class Sistema {
                 usuario.setIdUsuario(rs.getInt("id_usuario"));
                 usuario.setNome(rs.getString("nome"));
                 usuario.setEmail(rs.getString("email"));
+                usuario.setIdTipo(rs.getInt("id_tipo"));
                 // lista de dados, adicionar aqui
                 return usuario;
             }
