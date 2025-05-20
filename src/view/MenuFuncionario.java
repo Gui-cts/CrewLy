@@ -52,6 +52,11 @@ public class MenuFuncionario extends javax.swing.JFrame {
         btnPerfil.setContentAreaFilled(false);
         btnPerfil.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnPerfil.setOpaque(false);
+        btnPerfil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPerfilActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 330, 360, 80));
 
         btnEquipes.setBorder(null);
@@ -81,6 +86,12 @@ public class MenuFuncionario extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPerfilActionPerformed
+        // TODO add your handling code here:
+        new TelaPerfil(usuario).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnPerfilActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
