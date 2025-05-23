@@ -130,8 +130,8 @@ public class TelaLogin extends javax.swing.JFrame {
             // new TelaPrincipal(usuario).setVisible(true);
             if (usuario.getIdTipo() == 1) { // 1 = funcionário
                 new MenuFuncionario(usuario).setVisible(true);
-            /*} else if (usuario.getIdTipo() == 2) { // 2 = líder
-                new TelaLider(usuario).setVisible(true); */
+            } else if (usuario.getIdTipo() == 2) { // 2 = líder
+                new MenuLider(usuario).setVisible(true);
             }
 
             this.dispose();  // Fechando a tela de login

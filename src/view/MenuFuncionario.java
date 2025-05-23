@@ -77,8 +77,9 @@ public class MenuFuncionario extends javax.swing.JFrame {
         jLabel2.setText("Bem Vindo:");
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, -1, -1));
 
-        txtNomeLogado.setFont(new java.awt.Font("Segoe UI", 0, 22)); // NOI18N
+        txtNomeLogado.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
         txtNomeLogado.setForeground(new java.awt.Color(0, 0, 0));
+        txtNomeLogado.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         getContentPane().add(txtNomeLogado, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 130, 830, 30));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/design/0tela FUNCIONARIO.png"))); // NOI18N

@@ -143,7 +143,7 @@ public class TelaCadastro extends javax.swing.JFrame {
             + "Os dados fornecidos serão utilizados exclusivamente para a execução deste serviço e não serão compartilhados com terceiros sem seu consentimento expresso. "
             + "Você tem o direito de acessar, corrigir ou excluir seus dados a qualquer momento. "
             + "Caso tenha dúvidas sobre o tratamento de seus dados, entre em contato conosco para mais informações.";
-    textArea.setText(termosLGPD); // Coloque seu conteúdo de termos aqui
+    textArea.setText(termosLGPD);
     textArea.setWrapStyleWord(true);
     textArea.setLineWrap(true);
     textArea.setCaretPosition(0);

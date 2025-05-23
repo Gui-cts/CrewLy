@@ -9,7 +9,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.net.URL;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import model.Usuario;
+import org.netbeans.lib.awtextra.AbsoluteLayout;
 import utils.ImagemUtil;
 
 /**
@@ -23,42 +25,16 @@ public class TelaPerfil extends javax.swing.JFrame {
      */
     private Sistema sistema;
     private Usuario usuario;
-    
+
     public TelaPerfil(Usuario usuario) {
         this.usuario = usuario;
         initComponents();
         sistema = new Sistema();
-        setSize(1440, 1024); 
+        setSize(1440, 1024);
         setResizable(false);
-        getContentPane().setLayout(new BorderLayout());
-    getContentPane().add(jLabel1, BorderLayout.CENTER);
-
-    // Carrega a imagem original para definir o tamanho da janela
-    URL urlImagem = getClass().getResource("/design/TelaPerfil.jpg");
-    if (urlImagem != null) {
-        ImageIcon imgIcon = new ImageIcon(urlImagem);
-
-        // Define o tamanho da janela igual ao tamanho da imagem
-        int largura = imgIcon.getIconWidth();
-        int altura = imgIcon.getIconHeight();
-
-        setSize(largura, altura);
-        setMinimumSize(new Dimension(largura, altura)); // opcional: impede redimensionamento menor
-        setLocationRelativeTo(null); // centraliza a janela na tela
-
-        // Ajusta a imagem inicial no JLabel, com proporção
-        ImagemUtil.ajustarImagem(jLabel1, "/design/TelaPerfil.jpg");
-
-        // Escuta redimensionamento para ajustar a imagem junto
-        addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentResized(java.awt.event.ComponentEvent e) {
-                ImagemUtil.ajustarImagem(jLabel1, "/design/TelaPerfil.jpg");
-            }
-        });
-    } else {
-        System.err.println("Imagem não encontrada: /design/TelaPerfil.jpg");
-    }
+        txtNome.setText(usuario.getNome());
+        txtEmail.setText(usuario.getEmail());
+        lblCargo.setText("<html>Cargo: <span style='color:" + (usuario.getIdTipo() == 2 ? "red" : "green") + ";'>[" + (usuario.getIdTipo() == 2 ? "Lider" : "Funcionario") + "]</span></html>");
 
     }
 
@@ -71,18 +47,133 @@ public class TelaPerfil extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        txtNome = new javax.swing.JLabel();
+        txtEmail = new javax.swing.JLabel();
+        btnRedefinirSenha = new javax.swing.JButton();
+        btnEditarNome = new javax.swing.JButton();
+        btnEditarEmail = new javax.swing.JButton();
+        btnVoltar = new javax.swing.JButton();
+        lblCargo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        txtNome.setBackground(new java.awt.Color(0, 0, 0));
+        txtNome.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
+        txtNome.setForeground(new java.awt.Color(0, 0, 0));
+        txtNome.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        getContentPane().add(txtNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 240, 570, 40));
+
+        txtEmail.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
+        txtEmail.setForeground(new java.awt.Color(0, 0, 0));
+        txtEmail.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        getContentPane().add(txtEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 440, 570, 40));
+
+        btnRedefinirSenha.setBackground(new java.awt.Color(0, 0, 0));
+        btnRedefinirSenha.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
+        btnRedefinirSenha.setForeground(new java.awt.Color(255, 255, 255));
+        btnRedefinirSenha.setText("Redefinir senha");
+        btnRedefinirSenha.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRedefinirSenha.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRedefinirSenhaActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnRedefinirSenha, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 550, 170, 30));
+
+        btnEditarNome.setFont(new java.awt.Font("Oswald Medium", 0, 12)); // NOI18N
+        btnEditarNome.setText("Editar");
+        btnEditarNome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarNomeActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnEditarNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 250, -1, -1));
+
+        btnEditarEmail.setFont(new java.awt.Font("Oswald Medium", 0, 12)); // NOI18N
+        btnEditarEmail.setText("Editar");
+        getContentPane().add(btnEditarEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 450, -1, -1));
+
+        btnVoltar.setBorder(null);
+        btnVoltar.setContentAreaFilled(false);
+        btnVoltar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnVoltar.setOpaque(false);
+        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoltarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnVoltar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 90, 90));
+
+        lblCargo.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
+        getContentPane().add(lblCargo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1240, 130, 190, 40));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/design/TelaPerfil.jpg"))); // NOI18N
-        getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1514, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnRedefinirSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRedefinirSenhaActionPerformed
+        // TODO add your handling code here:
+        String novaSenha = solicitarNovaSenha();
+        String email = this.usuario.getEmail();
+        if (novaSenha == null) {
+            return;
+        }
+        boolean sucesso = sistema.redefinirSenha(email, novaSenha);
+        JOptionPane.showMessageDialog(this, sucesso ? "Senha atualizada com sucesso!" : "Erro ao atualizar a senha.");
+    }//GEN-LAST:event_btnRedefinirSenhaActionPerformed
+
+    private void btnEditarNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarNomeActionPerformed
+        // TODO add your handling code here:
+        String nome = JOptionPane.showInputDialog("Insira o novo nome:");
+        if (!nome.matches("^[A-Za-zÀ-ÿ\\s]{3,}$")) {
+            JOptionPane.showMessageDialog(null, "Nome inválido. Use apenas letras e pelo menos 3 caracteres.");
+            return;
+        }
+        boolean sucesso = sistema.redefinirNome(nome, usuario);
+        if (sucesso) {
+            usuario.setNome(nome);
+            txtNome.setText(nome);
+            JOptionPane.showMessageDialog(this, "Nome atualizado com sucesso!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Erro ao atualizar o nome.");
+        }
+    }//GEN-LAST:event_btnEditarNomeActionPerformed
+
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        // TODO add your handling code here:
+        new MenuFuncionario(usuario).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private String solicitarNovaSenha() {
+        String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
+        while (true) {
+            String novaSenha = JOptionPane.showInputDialog(this, "Digite a nova senha:");
+            if (novaSenha == null || novaSenha.trim().isEmpty()) {
+                return null;
+            }
+
+            if (!novaSenha.matches(regex)) {
+                JOptionPane.showMessageDialog(this,
+                        "A senha deve ter no mínimo 8 caracteres, com pelo menos:\n- 1 letra minúscula\n- 1 letra maiúscula\n- 1 número\n- 1 caractere especial (@#$%^&+=!)");
+            } else {
+                return novaSenha;
+            }
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEditarEmail;
+    private javax.swing.JButton btnEditarNome;
+    private javax.swing.JButton btnRedefinirSenha;
+    private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel lblCargo;
+    private javax.swing.JLabel txtEmail;
+    private javax.swing.JLabel txtNome;
     // End of variables declaration//GEN-END:variables
 }

@@ -73,6 +73,23 @@ public class Sistema {
             return false;
         }
     }
+    
+    public boolean redefinirNome(String nome, Usuario usuario) {
+        try (Connection conn = Database.getConnection()) {
+            String novoNome = nome; 
+            String sql = "UPDATE usuarios SET nome = ? WHERE email = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, novoNome);
+            stmt.setString(2, usuario.getEmail());
+            int rows = stmt.executeUpdate();
+            return rows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    //adicionar metodo para mudar email
 
     public boolean validarToken(String email, String token) {
         return TokenUtil.validarToken(email, token);
