@@ -28,6 +28,7 @@ public class Sistema {
             if (rs.next()) {
                 Usuario usuario = new Usuario();
                 usuario.setIdUsuario(rs.getInt("id_usuario"));
+                usuario.setSenhaHash(rs.getString("senha_hash"));
                 usuario.setNome(rs.getString("nome"));
                 usuario.setEmail(rs.getString("email"));
                 usuario.setIdTipo(rs.getInt("id_tipo"));
@@ -61,7 +62,7 @@ public class Sistema {
 
     public boolean redefinirSenha(String email, String novaSenha) {
         try (Connection conn = Database.getConnection()) {
-            String hashSenha = HashUtil.gerarHash(novaSenha); 
+            String hashSenha = HashUtil.gerarHash(novaSenha);
             String sql = "UPDATE usuarios SET senha_hash = ? WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, hashSenha);
@@ -73,10 +74,10 @@ public class Sistema {
             return false;
         }
     }
-    
+
     public boolean redefinirNome(String nome, Usuario usuario) {
         try (Connection conn = Database.getConnection()) {
-            String novoNome = nome; 
+            String novoNome = nome;
             String sql = "UPDATE usuarios SET nome = ? WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, novoNome);
@@ -88,8 +89,20 @@ public class Sistema {
             return false;
         }
     }
-    
+
     //adicionar metodo para mudar email
+    public boolean excluirUsuarioPorEmail(String email) {
+        String sql = "DELETE FROM usuarios WHERE email = ?";
+        try (Connection con = Database.getConnection(); 
+            PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            int linhasAfetadas = stmt.executeUpdate();
+            return linhasAfetadas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public boolean validarToken(String email, String token) {
         return TokenUtil.validarToken(email, token);

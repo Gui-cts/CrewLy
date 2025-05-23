@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import model.Usuario;
 import org.netbeans.lib.awtextra.AbsoluteLayout;
+import utils.HashUtil;
 import utils.ImagemUtil;
 
 /**
@@ -30,8 +31,7 @@ public class TelaPerfil extends javax.swing.JFrame {
         this.usuario = usuario;
         initComponents();
         sistema = new Sistema();
-        setSize(1440, 1024);
-        setResizable(false);
+        jScrollPane1.setViewportView(painelConteudo);
         txtNome.setText(usuario.getNome());
         txtEmail.setText(usuario.getEmail());
         lblCargo.setText("<html>Cargo: <span style='color:" + (usuario.getIdTipo() == 2 ? "red" : "green") + ";'>[" + (usuario.getIdTipo() == 2 ? "Lider" : "Funcionario") + "]</span></html>");
@@ -47,6 +47,8 @@ public class TelaPerfil extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        painelConteudo = new javax.swing.JPanel();
         txtNome = new javax.swing.JLabel();
         txtEmail = new javax.swing.JLabel();
         btnRedefinirSenha = new javax.swing.JButton();
@@ -54,21 +56,23 @@ public class TelaPerfil extends javax.swing.JFrame {
         btnEditarEmail = new javax.swing.JButton();
         btnVoltar = new javax.swing.JButton();
         lblCargo = new javax.swing.JLabel();
+        btnExcluirConta = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        painelConteudo.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtNome.setBackground(new java.awt.Color(0, 0, 0));
         txtNome.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
         txtNome.setForeground(new java.awt.Color(0, 0, 0));
         txtNome.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        getContentPane().add(txtNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 240, 570, 40));
+        painelConteudo.add(txtNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 240, 570, 40));
 
         txtEmail.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
         txtEmail.setForeground(new java.awt.Color(0, 0, 0));
         txtEmail.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        getContentPane().add(txtEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 440, 570, 40));
+        painelConteudo.add(txtEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 440, 570, 40));
 
         btnRedefinirSenha.setBackground(new java.awt.Color(0, 0, 0));
         btnRedefinirSenha.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
@@ -80,7 +84,7 @@ public class TelaPerfil extends javax.swing.JFrame {
                 btnRedefinirSenhaActionPerformed(evt);
             }
         });
-        getContentPane().add(btnRedefinirSenha, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 550, 170, 30));
+        painelConteudo.add(btnRedefinirSenha, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 550, 170, 30));
 
         btnEditarNome.setFont(new java.awt.Font("Oswald Medium", 0, 12)); // NOI18N
         btnEditarNome.setText("Editar");
@@ -89,11 +93,11 @@ public class TelaPerfil extends javax.swing.JFrame {
                 btnEditarNomeActionPerformed(evt);
             }
         });
-        getContentPane().add(btnEditarNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 250, -1, -1));
+        painelConteudo.add(btnEditarNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 250, -1, -1));
 
         btnEditarEmail.setFont(new java.awt.Font("Oswald Medium", 0, 12)); // NOI18N
         btnEditarEmail.setText("Editar");
-        getContentPane().add(btnEditarEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 450, -1, -1));
+        painelConteudo.add(btnEditarEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 450, -1, -1));
 
         btnVoltar.setBorder(null);
         btnVoltar.setContentAreaFilled(false);
@@ -104,13 +108,28 @@ public class TelaPerfil extends javax.swing.JFrame {
                 btnVoltarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnVoltar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 90, 90));
+        painelConteudo.add(btnVoltar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 90, 90));
 
         lblCargo.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
-        getContentPane().add(lblCargo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1240, 130, 190, 40));
+        painelConteudo.add(lblCargo, new org.netbeans.lib.awtextra.AbsoluteConstraints(1240, 130, 190, 40));
+
+        btnExcluirConta.setBorder(null);
+        btnExcluirConta.setContentAreaFilled(false);
+        btnExcluirConta.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnExcluirConta.setOpaque(false);
+        btnExcluirConta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirContaActionPerformed(evt);
+            }
+        });
+        painelConteudo.add(btnExcluirConta, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 900, 380, 60));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/design/TelaPerfil.jpg"))); // NOI18N
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1514, -1));
+        painelConteudo.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1514, -1));
+
+        jScrollPane1.setViewportView(painelConteudo);
+
+        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -149,6 +168,37 @@ public class TelaPerfil extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnVoltarActionPerformed
 
+    private void btnExcluirContaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirContaActionPerformed
+        // TODO add your handling code here:
+        String senhaDigitada = JOptionPane.showInputDialog(
+                this,
+                "Digite sua senha para confirmar a exclusão da conta.\nCUIDADO: Esta ação não pode ser desfeita."
+        );
+
+        if (senhaDigitada == null) {
+            return;
+        }
+
+        String hashSenhaDigitada = HashUtil.gerarHash(senhaDigitada);
+
+        System.out.println("Hash digitada: " + hashSenhaDigitada);
+        System.out.println("Hash armazenada: " + usuario.getSenhaHash());
+
+        if (hashSenhaDigitada.equals(usuario.getSenhaHash())) {
+            boolean sucesso = sistema.excluirUsuarioPorEmail(usuario.getEmail());
+            if (sucesso) {
+                JOptionPane.showMessageDialog(this, "Conta excluída com sucesso!");
+                new TelaLogin().setVisible(true);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao excluir conta.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Senha incorreta. A conta não será excluída.");
+        }
+
+    }//GEN-LAST:event_btnExcluirContaActionPerformed
+
     private String solicitarNovaSenha() {
         String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
         while (true) {
@@ -169,10 +219,13 @@ public class TelaPerfil extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEditarEmail;
     private javax.swing.JButton btnEditarNome;
+    private javax.swing.JButton btnExcluirConta;
     private javax.swing.JButton btnRedefinirSenha;
     private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblCargo;
+    private javax.swing.JPanel painelConteudo;
     private javax.swing.JLabel txtEmail;
     private javax.swing.JLabel txtNome;
     // End of variables declaration//GEN-END:variables
