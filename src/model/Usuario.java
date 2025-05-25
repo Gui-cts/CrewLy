@@ -19,8 +19,14 @@ public class Usuario {
     }
 
     public void logout() {
+        this.idUsuario = 0;
+        this.nome = "";
         this.email = "";
         this.senhaHash = "";
+        this.idTipo = 0;
+        if(this.competencia != null){
+            this.competencia.clear();
+        }
     }
 
     public void adicionarCompetencia(List<Competencia> competencias) {

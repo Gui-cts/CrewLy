@@ -70,6 +70,11 @@ public class MenuFuncionario extends javax.swing.JFrame {
         btnLogout.setContentAreaFilled(false);
         btnLogout.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnLogout.setOpaque(false);
+        btnLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogoutActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 610, 360, 80));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 22)); // NOI18N
@@ -93,6 +98,13 @@ public class MenuFuncionario extends javax.swing.JFrame {
         new TelaPerfil(usuario).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnPerfilActionPerformed
+
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+        // TODO add your handling code here:
+        usuario.logout();
+        new TelaLogin().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnLogoutActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
