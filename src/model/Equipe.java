@@ -5,9 +5,10 @@ import java.util.List;
 public class Equipe {
     private int idEquipe;
     private String nome;
+    private String descricao;  // ✅ Adicionado
     private int idLider;  // id do usuário líder
-    private List<Usuario> membros;  // opcional: se quiser carregar os membros
-    private List<Tarefa> tarefas;   // opcional: se quiser carregar as tarefas
+    private List<Usuario> membros;  // opcional
+    private List<Tarefa> tarefas;   // opcional
 
     // Getters e Setters
     public int getIdEquipe() {
@@ -24,6 +25,14 @@ public class Equipe {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getDescricao() {  // ✅ Getter adicionado
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {  // ✅ Setter adicionado
+        this.descricao = descricao;
     }
 
     public int getIdLider() {

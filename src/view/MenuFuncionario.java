@@ -64,6 +64,11 @@ public class MenuFuncionario extends javax.swing.JFrame {
         btnEquipes.setContentAreaFilled(false);
         btnEquipes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnEquipes.setOpaque(false);
+        btnEquipes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEquipesActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnEquipes, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 470, 360, 80));
 
         btnLogout.setBorder(null);
@@ -105,6 +110,12 @@ public class MenuFuncionario extends javax.swing.JFrame {
         new TelaLogin().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnLogoutActionPerformed
+
+    private void btnEquipesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEquipesActionPerformed
+        // TODO add your handling code here:
+        new TelaEquipeFuncionario(usuario).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnEquipesActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

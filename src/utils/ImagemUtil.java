@@ -1,48 +1,18 @@
 package utils;
 
-import java.awt.Image;
-import java.net.URL;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
+import javax.swing.*;
+import java.awt.*;
 
 public class ImagemUtil {
 
-    public static void ajustarImagem(JLabel label, String caminhoInterno) {
-    URL urlImagem = ImagemUtil.class.getResource(caminhoInterno);
-    if (urlImagem != null) {
-        ImageIcon imagemOriginal = new ImageIcon(urlImagem);
-        Image imagem = imagemOriginal.getImage();
+    public static void setImagemDeFundo(JPanel painel, String caminhoImagem) {
+        painel.setLayout(null);  // Permite posicionar a imagem livremente
 
-        int labelLargura = label.getWidth();
-        int labelAltura = label.getHeight();
+        ImageIcon imagem = new ImageIcon(ImagemUtil.class.getResource(caminhoImagem));
+        JLabel labelImagem = new JLabel(imagem);
+        labelImagem.setBounds(0, 0, painel.getWidth(), painel.getHeight());
 
-        int imagemOriginalLargura = imagemOriginal.getIconWidth();
-        int imagemOriginalAltura = imagemOriginal.getIconHeight();
-
-        if (labelLargura > 0 && labelAltura > 0) {
-            // Calcula a proporção
-            double proporcaoLabel = (double) labelLargura / labelAltura;
-            double proporcaoImagem = (double) imagemOriginalLargura / imagemOriginalAltura;
-
-            int novaLargura, novaAltura;
-
-            if (proporcaoImagem > proporcaoLabel) {
-                // Imagem mais larga que o espaço — limita pela largura
-                novaLargura = labelLargura;
-                novaAltura = (int) (labelLargura / proporcaoImagem);
-            } else {
-                // Imagem mais alta que o espaço — limita pela altura
-                novaAltura = labelAltura;
-                novaLargura = (int) (labelAltura * proporcaoImagem);
-            }
-
-            Image imagemRedimensionada = imagem.getScaledInstance(novaLargura, novaAltura, Image.SCALE_SMOOTH);
-            label.setIcon(new ImageIcon(imagemRedimensionada));
-            label.setHorizontalAlignment(JLabel.CENTER);
-            label.setVerticalAlignment(JLabel.CENTER);
-        }
-    } else {
-        System.err.println("Imagem não encontrada: " + caminhoInterno);
+        painel.add(labelImagem);
+        painel.setComponentZOrder(labelImagem, painel.getComponentCount() - 1);
     }
-  }
 }
