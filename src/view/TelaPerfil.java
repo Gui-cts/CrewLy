@@ -164,7 +164,11 @@ public class TelaPerfil extends javax.swing.JFrame {
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
         // TODO add your handling code here:
-        new MenuFuncionario(usuario).setVisible(true);
+        if (usuario.getIdTipo() == 1) { // 1 = funcionário
+            new MenuFuncionario(usuario).setVisible(true);
+        } else if (usuario.getIdTipo() == 2) { // 2 = líder
+            new MenuLider(usuario).setVisible(true);
+        }
         this.dispose();
     }//GEN-LAST:event_btnVoltarActionPerformed
 

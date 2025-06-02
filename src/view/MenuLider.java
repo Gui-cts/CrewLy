@@ -39,6 +39,8 @@ public class MenuLider extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         lblNome = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        btnEquipes = new javax.swing.JButton();
+        btnLogout = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -65,6 +67,28 @@ public class MenuLider extends javax.swing.JFrame {
         });
         getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 220, 360, 90));
 
+        btnEquipes.setBorder(null);
+        btnEquipes.setContentAreaFilled(false);
+        btnEquipes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEquipes.setOpaque(false);
+        btnEquipes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEquipesActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnEquipes, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 340, 360, 90));
+
+        btnLogout.setBorder(null);
+        btnLogout.setContentAreaFilled(false);
+        btnLogout.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLogout.setOpaque(false);
+        btnLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogoutActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 700, 360, 90));
+
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/design/0tela LÍDER.png"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
@@ -77,8 +101,23 @@ public class MenuLider extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void btnEquipesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEquipesActionPerformed
+        // TODO add your handling code here:
+        new TelaEquipeLider(usuario).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnEquipesActionPerformed
+
+    private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
+        // TODO add your handling code here:
+        usuario.logout();
+        new TelaLogin().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnLogoutActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnEquipes;
+    private javax.swing.JButton btnLogout;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

@@ -8,21 +8,14 @@ import java.util.List;
 
 public class EquipeDAO {
 
-    public void criarEquipe(Equipe equipe) throws SQLException {
-        String sql = "INSERT INTO equipes (nome, descricao, id_lider) VALUES (?, ?, ?)";
+    public void criarEquipe(String nome, int idLider, String descricao) throws SQLException {
+        String sql = "INSERT INTO equipes (nome, id_lider, descricao) VALUES (?, ?, ?)";
 
-        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            stmt.setString(1, equipe.getNome());
-            stmt.setString(2, equipe.getDescricao());
-            stmt.setInt(3, equipe.getIdLider());
-
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nome);
+            stmt.setInt(2, idLider);
+            stmt.setString(3, descricao);
             stmt.executeUpdate();
-
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                equipe.setIdEquipe(rs.getInt(1));
-            }
         }
     }
 

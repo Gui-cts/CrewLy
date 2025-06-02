@@ -123,8 +123,8 @@ public class Sistema {
 
     // =================== NOVOS MÉTODOS ====================
     // ===== EQUIPES =====
-    public void criarEquipe(Equipe equipe) throws SQLException {
-        equipeDAO.criarEquipe(equipe);
+    public void criarEquipe(String nome, String descricao, int idLider) throws SQLException {
+        equipeDAO.criarEquipe(nome, idLider, descricao);
     }
 
     public List<Equipe> listarEquipesPorLider(int idLider) throws SQLException {

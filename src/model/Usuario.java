@@ -1,6 +1,9 @@
 package model;
 
+import connection.Database;
+import java.sql.*;
 import controller.Sistema;
+import java.util.ArrayList;
 import java.util.List;
 import utils.HashUtil;
 
@@ -24,7 +27,7 @@ public class Usuario {
         this.email = "";
         this.senhaHash = "";
         this.idTipo = 0;
-        if(this.competencia != null){
+        if (this.competencia != null) {
             this.competencia.clear();
         }
     }
@@ -96,4 +99,53 @@ public class Usuario {
     public void setCompetencia(List<Competencia> competencia) {
         this.competencia = competencia;
     }
+
+    public List<Usuario> buscarUsuariosPorNomeOuEmail(String filtro) {
+        List<Usuario> usuarios = new ArrayList<>();
+        String sql = "SELECT * FROM usuarios WHERE LOWER(nome) LIKE ? OR LOWER(email) LIKE ?";
+
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String filtroLike = "%" + filtro.toLowerCase() + "%";
+            stmt.setString(1, filtroLike);
+            stmt.setString(2, filtroLike);
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Usuario u = new Usuario();
+                u.setIdUsuario(rs.getInt("id_usuario"));
+                u.setNome(rs.getString("nome"));
+                u.setEmail(rs.getString("email"));
+                // ... outros campos
+                usuarios.add(u);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return usuarios;
+    }
+
+    public boolean verificarUsuarioNaEquipe(int idUsuario, int idEquipe) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM membros_equipes WHERE id_usuario = ? AND id_equipe = ?";
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idUsuario);
+            stmt.setInt(2, idEquipe);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+        return false;
+    }
+
+    public void adicionarUsuarioNaEquipe(int idUsuario, int idEquipe) throws SQLException {
+        String sql = "INSERT INTO membros_equipes (id_usuario, id_equipe) VALUES (?, ?)";
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idUsuario);
+            stmt.setInt(2, idEquipe);
+            stmt.executeUpdate();
+        }
+    }
+
 }

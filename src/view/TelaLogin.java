@@ -78,7 +78,7 @@ public class TelaLogin extends javax.swing.JFrame {
                 btnLoginActionPerformed(evt);
             }
         });
-        getContentPane().add(btnLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 670, 200, 50));
+        getContentPane().add(btnLogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 670, 210, 60));
 
         btnCadastrar.setBorder(null);
         btnCadastrar.setContentAreaFilled(false);
