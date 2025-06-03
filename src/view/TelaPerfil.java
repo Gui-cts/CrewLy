@@ -4,9 +4,12 @@
  */
 package view;
 
+import connection.Database;
 import controller.Sistema;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -14,16 +17,23 @@ import model.Usuario;
 import org.netbeans.lib.awtextra.AbsoluteLayout;
 import utils.HashUtil;
 import utils.ImagemUtil;
+import utils.TokenUtil;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.MessagingException;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import utils.EmailSender;
 
-/**
- *
- * @author guico
- */
+
 public class TelaPerfil extends javax.swing.JFrame {
-
-    /**
-     * Creates new form TelaPerfil
-     */
+  
+    private JPanel painelCompetencias = new JPanel();
+    private ArrayList<JCheckBox> checkboxesCompetencias = new ArrayList<>();
     private Sistema sistema;
     private Usuario usuario;
 
@@ -53,10 +63,11 @@ public class TelaPerfil extends javax.swing.JFrame {
         txtEmail = new javax.swing.JLabel();
         btnRedefinirSenha = new javax.swing.JButton();
         btnEditarNome = new javax.swing.JButton();
-        btnEditarEmail = new javax.swing.JButton();
+        btnTrocarEmail = new javax.swing.JButton();
         btnVoltar = new javax.swing.JButton();
         lblCargo = new javax.swing.JLabel();
         btnExcluirConta = new javax.swing.JButton();
+        PainelCompetencias = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -95,9 +106,14 @@ public class TelaPerfil extends javax.swing.JFrame {
         });
         painelConteudo.add(btnEditarNome, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 250, -1, -1));
 
-        btnEditarEmail.setFont(new java.awt.Font("Oswald Medium", 0, 12)); // NOI18N
-        btnEditarEmail.setText("Editar");
-        painelConteudo.add(btnEditarEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 450, -1, -1));
+        btnTrocarEmail.setFont(new java.awt.Font("Oswald Medium", 0, 12)); // NOI18N
+        btnTrocarEmail.setText("Editar");
+        btnTrocarEmail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTrocarEmailActionPerformed(evt);
+            }
+        });
+        painelConteudo.add(btnTrocarEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 450, -1, -1));
 
         btnVoltar.setBorder(null);
         btnVoltar.setContentAreaFilled(false);
@@ -124,8 +140,12 @@ public class TelaPerfil extends javax.swing.JFrame {
         });
         painelConteudo.add(btnExcluirConta, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 900, 380, 60));
 
+        PainelCompetencias.setBackground(new Color (0,0,0,0));
+        PainelCompetencias.setOpaque(false);
+        painelConteudo.add(PainelCompetencias, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 640, 620, 210));
+
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/design/TelaPerfil.jpg"))); // NOI18N
-        painelConteudo.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1514, -1));
+        painelConteudo.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1440, -1));
 
         jScrollPane1.setViewportView(painelConteudo);
 
@@ -203,6 +223,60 @@ public class TelaPerfil extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnExcluirContaActionPerformed
 
+    private void btnTrocarEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTrocarEmailActionPerformed
+        // TODO add your handling code here:
+        String novoEmail = JOptionPane.showInputDialog(null, "Digite o novo e-mail:");
+
+        if (novoEmail == null || novoEmail.isBlank()) {
+            JOptionPane.showMessageDialog(null, "E-mail inválido.");
+            return;
+        }
+
+        String token = TokenUtil.gerarToken();
+        TokenUtil.salvarTokenNoBanco(novoEmail, token);
+
+        String assunto = "Confirmação de troca de e-mail";
+        String corpo = "Você solicitou a troca do seu e-mail no sistema Crewly.\n\n"
+                + "Se foi você, use o token abaixo para confirmar.\n"
+                + "Caso contrário, ignore esta mensagem.";
+
+        try {
+            EmailSender.enviarToken(novoEmail, token, assunto, corpo);
+        } catch (MessagingException ex) {
+            Logger.getLogger(TelaPerfil.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        String tokenDigitado = JOptionPane.showInputDialog(null, "Digite o token enviado para " + novoEmail);
+
+        if (tokenDigitado == null || tokenDigitado.isBlank()) {
+            JOptionPane.showMessageDialog(null, "Token não inserido.");
+            return;
+        }
+
+        if (TokenUtil.validarToken(novoEmail, tokenDigitado)) {
+            try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement("UPDATE usuarios SET email = ? WHERE email = ?")) {
+
+                stmt.setString(1, novoEmail);
+                stmt.setString(2, usuario.getEmail()); // você precisa pegar o email atual do usuário logado
+                int atualizado = stmt.executeUpdate();
+
+                if (atualizado > 0) {
+                    JOptionPane.showMessageDialog(null, "E-mail atualizado com sucesso!");
+                    TokenUtil.removerToken(novoEmail);
+                    // Aqui você pode atualizar o valor de emailAtualDoUsuario, se ele for uma variável acessível.
+                } else {
+                    JOptionPane.showMessageDialog(null, "Erro ao atualizar o e-mail.");
+                }
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erro de conexão com o banco.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Token inválido ou expirado.");
+        }
+    }//GEN-LAST:event_btnTrocarEmailActionPerformed
+
     private String solicitarNovaSenha() {
         String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
         while (true) {
@@ -220,11 +294,83 @@ public class TelaPerfil extends javax.swing.JFrame {
         }
     }
 
+    private void carregarCompetenciasDoBanco(int idUsuario) {
+        painelCompetencias.removeAll();
+        checkboxesCompetencias.clear();
+
+        try (Connection conn = Database.getConnection()) {
+            // Buscar todas as competências
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM competencia");
+            ResultSet rs = stmt.executeQuery();
+
+            // Buscar as competências do usuário
+            Set<Integer> competenciasUsuario = new HashSet<>();
+            PreparedStatement stmtUser = conn.prepareStatement(
+                    "SELECT id_competencia FROM usuario_competencia WHERE id_usuario = ?"
+            );
+            stmtUser.setInt(1, idUsuario);
+            ResultSet rsUser = stmtUser.executeQuery();
+            while (rsUser.next()) {
+                competenciasUsuario.add(rsUser.getInt("id_competencia"));
+            }
+
+            // Criar checkboxes
+            painelCompetencias.setLayout(new GridLayout(0, 1)); // ou BoxLayout
+            while (rs.next()) {
+                int id = rs.getInt("id_competencia");
+                String nome = rs.getString("nome");
+
+                JCheckBox cb = new JCheckBox(nome);
+                cb.setSelected(competenciasUsuario.contains(id));
+                cb.putClientProperty("id_competencia", id);
+
+                checkboxesCompetencias.add(cb);
+                painelCompetencias.add(cb);
+            }
+
+            painelCompetencias.revalidate();
+            painelCompetencias.repaint();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void salvarCompetenciasDoUsuario(int idUsuario) {
+        try (Connection conn = Database.getConnection()) {
+            // Apagar antigas
+            PreparedStatement del = conn.prepareStatement(
+                    "DELETE FROM usuario_competencia WHERE id_usuario = ?"
+            );
+            del.setInt(1, idUsuario);
+            del.executeUpdate();
+
+            // Inserir novas marcadas
+            PreparedStatement ins = conn.prepareStatement(
+                    "INSERT INTO usuario_competencia (id_usuario, id_competencia) VALUES (?, ?)"
+            );
+            for (JCheckBox cb : checkboxesCompetencias) {
+                if (cb.isSelected()) {
+                    int idCompetencia = (int) cb.getClientProperty("id_competencia");
+                    ins.setInt(1, idUsuario);
+                    ins.setInt(2, idCompetencia);
+                    ins.addBatch();
+                }
+            }
+            ins.executeBatch();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnEditarEmail;
+    private javax.swing.JPanel PainelCompetencias;
     private javax.swing.JButton btnEditarNome;
     private javax.swing.JButton btnExcluirConta;
     private javax.swing.JButton btnRedefinirSenha;
+    private javax.swing.JButton btnTrocarEmail;
     private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;

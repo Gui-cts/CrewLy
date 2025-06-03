@@ -8,13 +8,21 @@ package view;
  *
  * @author guico
  */
+import connection.Database;
 import controller.Sistema;
+import java.util.List;
+import javax.swing.JOptionPane;
+import model.Tarefa;
 import model.Usuario;
+import java.sql.*;
+import java.util.ArrayList;
+import model.RelatorioTarefa;
 
 public class MenuLider extends javax.swing.JFrame {
 
     private Sistema sistema;
     private Usuario usuario;
+
     /**
      * Creates new form MenuLider
      */
@@ -22,7 +30,7 @@ public class MenuLider extends javax.swing.JFrame {
         this.usuario = usuario;
         initComponents();
         sistema = new Sistema();
-        setSize(1440, 1024); 
+        setSize(1440, 1024);
         setResizable(false);
         lblNome.setText(usuario.getNome());
     }
@@ -41,6 +49,8 @@ public class MenuLider extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         btnEquipes = new javax.swing.JButton();
         btnLogout = new javax.swing.JButton();
+        btnRelatorio = new javax.swing.JButton();
+        btnGerenciar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -89,6 +99,28 @@ public class MenuLider extends javax.swing.JFrame {
         });
         getContentPane().add(btnLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 700, 360, 90));
 
+        btnRelatorio.setBorder(null);
+        btnRelatorio.setContentAreaFilled(false);
+        btnRelatorio.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRelatorio.setOpaque(false);
+        btnRelatorio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRelatorioActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnRelatorio, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 580, 360, 90));
+
+        btnGerenciar.setBorder(null);
+        btnGerenciar.setContentAreaFilled(false);
+        btnGerenciar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGerenciar.setOpaque(false);
+        btnGerenciar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerenciarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnGerenciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 460, 360, 90));
+
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/design/0tela LÍDER.png"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
@@ -114,10 +146,51 @@ public class MenuLider extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_btnLogoutActionPerformed
 
+    private void btnRelatorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRelatorioActionPerformed
+        // TODO add your handling code here:
+        try {
+            int idLiderLogado = usuario.getIdUsuario(); // ou outra forma de pegar o ID do líder
+
+            Tarefa tarefa = new Tarefa();
+            List<RelatorioTarefa> relatorio = tarefa.gerarRelatorioDoLider(idLiderLogado);
+            List<String> nomesEquipes = obterNomesEquipesDoLider(idLiderLogado);
+
+            PainelRelatorioTarefas painel = new PainelRelatorioTarefas(relatorio, nomesEquipes);
+            painel.setVisible(true);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro ao gerar relatório: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnRelatorioActionPerformed
+
+    private void btnGerenciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerenciarActionPerformed
+        // TODO add your handling code here:
+        DialogGerenciar dialog = new DialogGerenciar(this, usuario);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_btnGerenciarActionPerformed
+
+    private List<String> obterNomesEquipesDoLider(int idLider) throws SQLException {
+        List<String> nomes = new ArrayList<>();
+
+        String sql = "SELECT nome FROM equipes WHERE id_lider = ?";
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idLider);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                nomes.add(rs.getString("nome"));
+            }
+        }
+        return nomes;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEquipes;
+    private javax.swing.JButton btnGerenciar;
     private javax.swing.JButton btnLogout;
+    private javax.swing.JButton btnRelatorio;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

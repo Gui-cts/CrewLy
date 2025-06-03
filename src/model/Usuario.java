@@ -148,4 +148,12 @@ public class Usuario {
         }
     }
 
+    public void tornarLider(int idUsuario) throws SQLException {
+        String sql = "UPDATE usuarios SET id_tipo = 2 WHERE id_usuario = ?";
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idUsuario);
+            stmt.executeUpdate();
+        }
+    }
+
 }

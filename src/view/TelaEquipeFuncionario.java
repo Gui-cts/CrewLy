@@ -50,6 +50,7 @@ public class TelaEquipeFuncionario extends javax.swing.JFrame {
         listEquipesUsuario = new javax.swing.JList<>();
         jScrollPane2 = new javax.swing.JScrollPane();
         listTarefasEquipe = new javax.swing.JList<>();
+        btnVoltar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -92,6 +93,17 @@ public class TelaEquipeFuncionario extends javax.swing.JFrame {
         getContentPane().add(jScrollPane2);
         jScrollPane2.setBounds(270, 120, 1130, 860);
 
+        btnVoltar.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
+        btnVoltar.setForeground(new java.awt.Color(0, 0, 0));
+        btnVoltar.setText("Voltar");
+        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoltarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnVoltar);
+        btnVoltar.setBounds(290, 30, 130, 40);
+
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/design/tela_equipe_funcionario.png"))); // NOI18N
         getContentPane().add(jLabel1);
         jLabel1.setBounds(-3, -4, 1440, 1020);
@@ -131,13 +143,19 @@ public class TelaEquipeFuncionario extends javax.swing.JFrame {
         if (tituloTarefa != null) {
             try {
                 Tarefa tarefa = buscarTarefaPorTitulo(tituloTarefa);
-                new DialogDetalhesTarefa(this, true, tarefa).setVisible(true);
+                new DialogDetalhesTarefa(this, true, tarefa, usuario).setVisible(true);
             } catch (SQLException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Erro ao carregar detalhes da tarefa.");
             }
         }
     }//GEN-LAST:event_listTarefasEquipeMouseClicked
+
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        // TODO add your handling code here:
+        new MenuFuncionario(usuario).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnVoltarActionPerformed
 
     private int buscarIdEquipePorNome(String nomeEquipe) throws SQLException {
         for (Equipe e : equipesDoUsuario) {  // Lista que você já carrega as equipes do usuário.
@@ -184,6 +202,7 @@ public class TelaEquipeFuncionario extends javax.swing.JFrame {
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

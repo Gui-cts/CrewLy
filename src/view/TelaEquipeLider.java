@@ -60,6 +60,7 @@ public class TelaEquipeLider extends javax.swing.JFrame {
         btnDeletarEquipe = new javax.swing.JButton();
         btnCriarTarefa = new javax.swing.JButton();
         btnAdicionarMembro = new javax.swing.JButton();
+        btnVoltar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -137,6 +138,16 @@ public class TelaEquipeLider extends javax.swing.JFrame {
         });
         getContentPane().add(btnAdicionarMembro, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 150, 250, 50));
 
+        btnVoltar.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
+        btnVoltar.setForeground(new java.awt.Color(0, 0, 0));
+        btnVoltar.setText("Voltar");
+        btnVoltar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVoltarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnVoltar, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 40, 120, 40));
+
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/design/tela_equipe_lider.png"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 1030));
 
@@ -163,7 +174,7 @@ public class TelaEquipeLider extends javax.swing.JFrame {
         if (tituloTarefa != null) {
             try {
                 Tarefa tarefa = buscarTarefaPorTitulo(tituloTarefa);
-                new DialogDetalhesTarefa(this, true, tarefa).setVisible(true);
+                new DialogDetalhesTarefa(this, true, tarefa, usuario).setVisible(true);
             } catch (SQLException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Erro ao carregar detalhes da tarefa.");
@@ -268,6 +279,12 @@ public class TelaEquipeLider extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnAdicionarMembroActionPerformed
 
+    private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        // TODO add your handling code here:
+        new MenuLider(usuario).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnVoltarActionPerformed
+
     private void salvarTarefaNoBanco(Tarefa tarefa) {
         String sql = "INSERT INTO tarefas (titulo, descricao, data_limite, concluida, id_equipe) VALUES (?, ?, ?, ?, ?)";
 
@@ -364,6 +381,7 @@ public class TelaEquipeLider extends javax.swing.JFrame {
     private javax.swing.JButton btnCriarEquipe;
     private javax.swing.JButton btnCriarTarefa;
     private javax.swing.JButton btnDeletarEquipe;
+    private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

@@ -7,10 +7,13 @@ import utils.HashUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-
+import utils.EmailSender;
 
 /**
  *
@@ -22,17 +25,16 @@ public class TelaCadastro extends javax.swing.JFrame {
      * Creates new form TelaCadastro
      */
     private Sistema sistema;
-    
+
     public TelaCadastro() {
         initComponents();
         sistema = new Sistema();
-        setSize(1440, 1024); 
+        setSize(1440, 1024);
         setResizable(false); // Impede redimensionamento
         setLocationRelativeTo(null); // Centraliza na tela
         txtSenha.setToolTipText("<html>A senha deve ter:<br>- No mínimo 8 caracteres<br>- Uma letra maiúscula<br>- Uma letra minúscula<br>- Um caractere especial</html>");
         txtEmail.setToolTipText("<html>Formato válido de e-mail:<br>- Deve conter @ e domínio<br>Ex: usuario@exemplo.com</html>");
         txtNome.setToolTipText("<html>O nome deve conter:<br>- Pelo menos 3 letras<br>- Apenas letras (sem números ou símbolos)</html>");
-
 
     }
 
@@ -137,80 +139,90 @@ public class TelaCadastro extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNomeActionPerformed
     private void exibirTermos() {
-    JDialog termosDialog = new JDialog(this, "Termos e Condições", true); // true significa modal
-    JTextArea textArea = new JTextArea();
-    String termosLGPD = "Ao aceitar este termo, você concorda com o uso dos seus dados pessoais conforme a Lei Geral de Proteção de Dados (LGPD). "
-            + "Os dados fornecidos serão utilizados exclusivamente para a execução deste serviço e não serão compartilhados com terceiros sem seu consentimento expresso. "
-            + "Você tem o direito de acessar, corrigir ou excluir seus dados a qualquer momento. "
-            + "Caso tenha dúvidas sobre o tratamento de seus dados, entre em contato conosco para mais informações.";
-    textArea.setText(termosLGPD);
-    textArea.setWrapStyleWord(true);
-    textArea.setLineWrap(true);
-    textArea.setCaretPosition(0);
-    textArea.setEditable(false);
+        JDialog termosDialog = new JDialog(this, "Termos e Condições", true); // true significa modal
+        JTextArea textArea = new JTextArea();
+        String termosLGPD = "Ao aceitar este termo, você concorda com o uso dos seus dados pessoais conforme a Lei Geral de Proteção de Dados (LGPD). "
+                + "Os dados fornecidos serão utilizados exclusivamente para a execução deste serviço e não serão compartilhados com terceiros sem seu consentimento expresso. "
+                + "Você tem o direito de acessar, corrigir ou excluir seus dados a qualquer momento. "
+                + "Caso tenha dúvidas sobre o tratamento de seus dados, entre em contato conosco para mais informações.";
+        textArea.setText(termosLGPD);
+        textArea.setWrapStyleWord(true);
+        textArea.setLineWrap(true);
+        textArea.setCaretPosition(0);
+        textArea.setEditable(false);
 
-    JScrollPane scrollPane = new JScrollPane(textArea);
-    termosDialog.getContentPane().add(scrollPane);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        termosDialog.getContentPane().add(scrollPane);
 
-    termosDialog.setSize(400, 300);
-    termosDialog.setLocationRelativeTo(this); // Centraliza o dialog em relação ao JFrame
-    termosDialog.setVisible(true);
-}
+        termosDialog.setSize(400, 300);
+        termosDialog.setLocationRelativeTo(this); // Centraliza o dialog em relação ao JFrame
+        termosDialog.setVisible(true);
+    }
     private void btnCadastroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastroActionPerformed
         // TODO add your handling code here:
         if (!chkTermos.isSelected()) {
-        JOptionPane.showMessageDialog(null, "Você precisa aceitar os termos e condições para concluir o cadastro.");
-        return; // Impede o cadastro de continuar
+            JOptionPane.showMessageDialog(null, "Você precisa aceitar os termos e condições para concluir o cadastro.");
+            return;
         }
+
         String nome = txtNome.getText().trim();
         String email = txtEmail.getText().trim();
         String senha = new String(txtSenha.getPassword());
         String confirmarSenha = new String(txtConfirmarSenha.getPassword());
 
-        // Validação do nome (letras e espaços, mínimo 3)
         if (!nome.matches("^[A-Za-zÀ-ÿ\\s]{3,}$")) {
             JOptionPane.showMessageDialog(null, "Nome inválido. Use apenas letras e pelo menos 3 caracteres.");
             return;
         }
 
-        // Validação do e-mail
         if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
             JOptionPane.showMessageDialog(null, "E-mail inválido. Digite um e-mail no formato correto.");
             return;
         }
 
-        // Validação de senha forte
         if (!senha.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$")) {
             JOptionPane.showMessageDialog(null, "A senha deve conter ao menos 8 caracteres, uma letra maiúscula, uma minúscula, um número e um símbolo.");
             return;
         }
 
-        // Verifica se as senhas coincidem
         if (!senha.equals(confirmarSenha)) {
             JOptionPane.showMessageDialog(null, "As senhas não coincidem.");
             return;
         }
 
-        // Gerar hash da senha
         String senhaHash = HashUtil.gerarHash(senha);
 
-        // cadastro no banco
         try (Connection conexao = Database.getConnection()) {
             String sql = "INSERT INTO usuarios (nome, email, senha_hash, id_tipo, consentimento_lgpd) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement stmt = conexao.prepareStatement(sql);
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.setString(3, senhaHash);
-            stmt.setInt(4, 1); // padrão 1 para funcionario, lider sera colocado maualmente no bd com tipo 2
-            stmt.setBoolean(5, true); // consentimento LGPD aceito
+            stmt.setInt(4, 1); // Tipo padrão: funcionário
+            stmt.setBoolean(5, true);
 
             stmt.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!");
+
+            // Envia e-mail de boas-vindas
+            String assunto = "Bem-vindo à Crewly!";
+            String corpo = "Olá " + nome + ",\n\n"
+                    + "Seu cadastro foi realizado com sucesso em nosso sistema Crewly.\n"
+                    + "Aproveite as funcionalidades e conte conosco!\n\n"
+                    + "Atenciosamente,\nEquipe Crewly";
+
+            EmailSender.enviarToken(email, "", assunto, corpo); // "" pois não precisa de token nesse caso
+
+            JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso! Um e-mail de boas-vindas foi enviado.");
+
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Erro ao cadastrar: " + e.getMessage());
+            return;
+        } catch (MessagingException ex) {
+            Logger.getLogger(TelaCadastro.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         new TelaLogin().setVisible(true);
-            dispose();
+        dispose();
 
     }//GEN-LAST:event_btnCadastroActionPerformed
 
@@ -218,8 +230,8 @@ public class TelaCadastro extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.setVisible(false);
         javax.swing.Timer timer = new javax.swing.Timer(200, e -> {
-        new TelaLogin().setVisible(true);
-        dispose();
+            new TelaLogin().setVisible(true);
+            dispose();
         });
         timer.setRepeats(false); // só uma execução
         timer.start();

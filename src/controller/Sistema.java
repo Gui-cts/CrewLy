@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import javax.mail.MessagingException;
 
 public class Sistema {
 
@@ -53,17 +54,28 @@ public class Sistema {
         return null;
     }
 
-    public String gerarTokenRecuperacao(String email) {
+    public String gerarTokenRecuperacao(String email) throws MessagingException {
         try (Connection conn = Database.getConnection()) {
-            String sql = "SELECT * FROM usuarios WHERE email = ?";
+            String sql = "SELECT nome FROM usuarios WHERE email = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                String nome = rs.getString("nome");
                 String token = TokenUtil.gerarToken();
                 TokenUtil.salvarTokenNoBanco(email, token);
-                EmailSender.enviarToken(email, token);
+
+                // Mensagem personalizada para recuperação de senha
+                String assunto = "Recuperação de Senha - Crewly";
+                String corpo = "Olá " + nome + ",\n\n"
+                        + "Recebemos uma solicitação para redefinir sua senha no sistema Crewly.\n"
+                        + "Use o código abaixo para concluir o processo de recuperação:\n\n"
+                        + "Código: " + token + "\n\n"
+                        + "Se você não solicitou isso, ignore este e-mail.\n\n"
+                        + "Atenciosamente,\nEquipe Crewly";
+
+                EmailSender.enviarToken(email, token, assunto, corpo);
                 return token;
             }
         } catch (SQLException e) {
