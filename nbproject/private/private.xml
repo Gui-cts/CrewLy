@@ -4,9 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/TelaLogin.java</file>
+            <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/dao/UsuarioCompetenciaDAO.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/model/Equipe.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/dao/TarefaDAO.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/DialogGerenciar.java</file>
+            <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/model/Competencia.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/connection/Database.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/DialogAdicionarMembro.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/TelaEquipeLider.java</file>
@@ -32,6 +34,7 @@
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/model/Tarefa.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/TelaEquipeFuncionario.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/dao/TarefaResponsavelDAO.java</file>
+            <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/dao/CompetenciaDAO.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/main/CrewLy.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/DialogVerUploads.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/PainelRelatorioTarefas.java</file>

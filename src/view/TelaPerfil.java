@@ -21,17 +21,19 @@ import utils.TokenUtil;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import model.Competencia;
 import utils.EmailSender;
 
-
 public class TelaPerfil extends javax.swing.JFrame {
-  
+
     private JPanel painelCompetencias = new JPanel();
     private ArrayList<JCheckBox> checkboxesCompetencias = new ArrayList<>();
     private Sistema sistema;
@@ -41,11 +43,33 @@ public class TelaPerfil extends javax.swing.JFrame {
         this.usuario = usuario;
         initComponents();
         sistema = new Sistema();
+
+        // Ajusta o painel de rolagem para mostrar o painelConteudo
         jScrollPane1.setViewportView(painelConteudo);
+
+        // Define um tamanho maior para o painel para permitir a rolagem
+        painelConteudo.setPreferredSize(new Dimension(1440, 1400)); // ajuste se necessário
+
+        // Preenche os dados do usuário
         txtNome.setText(usuario.getNome());
         txtEmail.setText(usuario.getEmail());
-        lblCargo.setText("<html>Cargo: <span style='color:" + (usuario.getIdTipo() == 2 ? "red" : "green") + ";'>[" + (usuario.getIdTipo() == 2 ? "Lider" : "Funcionario") + "]</span></html>");
 
+        lblCargo.setText("<html>Cargo: <span style='color:" + (usuario.getIdTipo() == 2 ? "red" : "green") + ";'>["
+                + (usuario.getIdTipo() == 2 ? "Lider" : "Funcionario") + "]</span></html>");
+
+        // Carrega o painel de competências
+        carregarCompetenciasDoUsuario(this.usuario.getIdUsuario());
+
+        // Cria e posiciona o botão de salvar abaixo das competências
+        JButton btnSalvarCompetencias = new JButton("Salvar Competências");
+        btnSalvarCompetencias.setFont(new java.awt.Font("Oswald Medium", 0, 16));
+        btnSalvarCompetencias.addActionListener(e -> {
+            salvarCompetenciasDoUsuario(usuario.getIdUsuario());
+            JOptionPane.showMessageDialog(this, "Competências atualizadas com sucesso!");
+        });
+
+        // Ajuste a posição do botão para abaixo do painel de competências
+        painelConteudo.add(btnSalvarCompetencias, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 1100, 200, 30));
     }
 
     /**
@@ -67,7 +91,6 @@ public class TelaPerfil extends javax.swing.JFrame {
         btnVoltar = new javax.swing.JButton();
         lblCargo = new javax.swing.JLabel();
         btnExcluirConta = new javax.swing.JButton();
-        PainelCompetencias = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -139,10 +162,6 @@ public class TelaPerfil extends javax.swing.JFrame {
             }
         });
         painelConteudo.add(btnExcluirConta, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 900, 380, 60));
-
-        PainelCompetencias.setBackground(new Color (0,0,0,0));
-        PainelCompetencias.setOpaque(false);
-        painelConteudo.add(PainelCompetencias, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 640, 620, 210));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/design/TelaPerfil.jpg"))); // NOI18N
         painelConteudo.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1440, -1));
@@ -294,46 +313,32 @@ public class TelaPerfil extends javax.swing.JFrame {
         }
     }
 
-    private void carregarCompetenciasDoBanco(int idUsuario) {
+    private void carregarCompetenciasDoUsuario(int idUsuario) {
         painelCompetencias.removeAll();
-        checkboxesCompetencias.clear();
+        painelCompetencias.setLayout(new javax.swing.BoxLayout(painelCompetencias, javax.swing.BoxLayout.Y_AXIS));
 
-        try (Connection conn = Database.getConnection()) {
-            // Buscar todas as competências
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM competencia");
-            ResultSet rs = stmt.executeQuery();
+        List<Competencia> todas = sistema.buscarTodasCompetencias();
+        List<Integer> competenciasDoUsuario = sistema.buscarCompetenciasPorUsuario(idUsuario);
 
-            // Buscar as competências do usuário
-            Set<Integer> competenciasUsuario = new HashSet<>();
-            PreparedStatement stmtUser = conn.prepareStatement(
-                    "SELECT id_competencia FROM usuario_competencia WHERE id_usuario = ?"
-            );
-            stmtUser.setInt(1, idUsuario);
-            ResultSet rsUser = stmtUser.executeQuery();
-            while (rsUser.next()) {
-                competenciasUsuario.add(rsUser.getInt("id_competencia"));
-            }
-
-            // Criar checkboxes
-            painelCompetencias.setLayout(new GridLayout(0, 1)); // ou BoxLayout
-            while (rs.next()) {
-                int id = rs.getInt("id_competencia");
-                String nome = rs.getString("nome");
-
-                JCheckBox cb = new JCheckBox(nome);
-                cb.setSelected(competenciasUsuario.contains(id));
-                cb.putClientProperty("id_competencia", id);
-
-                checkboxesCompetencias.add(cb);
-                painelCompetencias.add(cb);
-            }
-
-            painelCompetencias.revalidate();
-            painelCompetencias.repaint();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (Competencia c : todas) {
+            JCheckBox checkBox = new JCheckBox(c.getNome());
+            checkBox.putClientProperty("id_competencia", c.getId());
+            checkBox.setSelected(competenciasDoUsuario.contains(c.getId()));
+            painelCompetencias.add(checkBox);
+            checkboxesCompetencias.add(checkBox);
         }
+
+        painelCompetencias.setPreferredSize(new Dimension(300, 200));
+        painelCompetencias.setBackground(Color.WHITE);
+        painelCompetencias.setVisible(true); // Garante que o painel esteja visível
+
+        painelConteudo.add(painelCompetencias, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 650, 300, 200));
+
+        painelCompetencias.revalidate();
+        painelCompetencias.repaint();
+
+        painelConteudo.revalidate();
+        painelConteudo.repaint();
     }
 
     private void salvarCompetenciasDoUsuario(int idUsuario) {
@@ -350,13 +355,15 @@ public class TelaPerfil extends javax.swing.JFrame {
                     "INSERT INTO usuario_competencia (id_usuario, id_competencia) VALUES (?, ?)"
             );
             for (JCheckBox cb : checkboxesCompetencias) {
-                if (cb.isSelected()) {
-                    int idCompetencia = (int) cb.getClientProperty("id_competencia");
+                Object idObj = cb.getClientProperty("id_competencia");
+                if (cb.isSelected() && idObj != null) {
+                    int idCompetencia = (int) idObj;
                     ins.setInt(1, idUsuario);
                     ins.setInt(2, idCompetencia);
                     ins.addBatch();
                 }
             }
+
             ins.executeBatch();
 
         } catch (SQLException e) {
@@ -366,7 +373,6 @@ public class TelaPerfil extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel PainelCompetencias;
     private javax.swing.JButton btnEditarNome;
     private javax.swing.JButton btnExcluirConta;
     private javax.swing.JButton btnRedefinirSenha;

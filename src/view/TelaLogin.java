@@ -6,6 +6,9 @@ package view;
 
 import model.Usuario;
 import controller.Sistema;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import javax.swing.JOptionPane;
 import view.TelaCadastro;
 
@@ -152,7 +155,7 @@ public class TelaLogin extends javax.swing.JFrame {
         timer.start();
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
-    private String solicitarEmailValido() {
+    private String solicitarEmailValido() throws MessagingException {
         while (true) {
             String email = JOptionPane.showInputDialog(this, "Digite seu e-mail:");
             if (email == null || email.trim().isEmpty()) {
@@ -203,7 +206,12 @@ public class TelaLogin extends javax.swing.JFrame {
 
     private void btnEsqueciSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEsqueciSenhaActionPerformed
         // TODO add your handling code here:
-        String email = solicitarEmailValido();
+        String email = null;
+        try {
+            email = solicitarEmailValido();
+        } catch (MessagingException ex) {
+            Logger.getLogger(TelaLogin.class.getName()).log(Level.SEVERE, null, ex);
+        }
         if (email == null) {
             return;
         }

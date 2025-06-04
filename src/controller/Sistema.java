@@ -12,20 +12,33 @@ import dao.EquipeDAO;
 import dao.EquipeUsuarioDAO;
 import dao.TarefaDAO;
 import dao.TarefaResponsavelDAO;
+import dao.CompetenciaDAO;
+import dao.UsuarioCompetenciaDAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.mail.MessagingException;
+import model.Competencia;
+
+
 
 public class Sistema {
 
+    private CompetenciaDAO competenciaDAO;
+    private UsuarioCompetenciaDAO usuarioCompetenciaDAO;
     private EquipeDAO equipeDAO = new EquipeDAO();
     private EquipeUsuarioDAO equipeUsuarioDAO = new EquipeUsuarioDAO();
     private TarefaDAO tarefaDAO = new TarefaDAO();
     private TarefaResponsavelDAO tarefaResponsavelDAO = new TarefaResponsavelDAO();
+
+    public Sistema() {
+    this.competenciaDAO = new CompetenciaDAO();
+    this.usuarioCompetenciaDAO = new UsuarioCompetenciaDAO();
+}
 
     // =================== EXISTENTES ====================
     public Usuario autenticarUsuario(String email, String senha) {
@@ -176,4 +189,32 @@ public class Sistema {
     public void removerResponsavelDaTarefa(int idTarefa, int idUsuario) throws SQLException {
         tarefaResponsavelDAO.removerResponsavelDaTarefa(idTarefa, idUsuario);
     }
+
+    public List<String> buscarCompetencias(int idUsuario) {
+        List<String> competencias = new ArrayList<>();
+
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT nome FROM competencia WHERE id_usuario = ?")) {
+
+            stmt.setInt(1, idUsuario);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                competencias.add(rs.getString("nome_competencia"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return competencias;
+    }
+
+    public List<Competencia> buscarTodasCompetencias() {
+        return competenciaDAO.buscarTodas();
+    }
+
+    public List<Integer> buscarCompetenciasPorUsuario(int idUsuario) {
+        return usuarioCompetenciaDAO.buscarIdsPorUsuario(idUsuario);
+    }
+
 }
