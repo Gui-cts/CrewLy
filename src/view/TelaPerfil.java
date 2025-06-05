@@ -54,20 +54,6 @@ public class TelaPerfil extends javax.swing.JFrame {
 
         lblCargo.setText("<html>Cargo: <span style='color:" + (usuario.getIdTipo() == 2 ? "red" : "green") + ";'>["
                 + (usuario.getIdTipo() == 2 ? "Lider" : "Funcionario") + "]</span></html>");
-
-        // Carrega o painel de competências
-        carregarCompetenciasDoUsuario(this.usuario.getIdUsuario());
-
-        // Cria e posiciona o botão de salvar abaixo das competências
-        JButton btnSalvarCompetencias = new JButton("Salvar Competências");
-        btnSalvarCompetencias.setFont(new java.awt.Font("Oswald Medium", 0, 16));
-        btnSalvarCompetencias.addActionListener(e -> {
-            salvarCompetenciasDoUsuario(usuario.getIdUsuario());
-            JOptionPane.showMessageDialog(this, "Competências atualizadas com sucesso!");
-        });
-
-        // Ajuste a posição do botão para abaixo do painel de competências
-        painelConteudo.add(btnSalvarCompetencias, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 1100, 200, 30));
     }
 
     /**
