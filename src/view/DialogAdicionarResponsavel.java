@@ -1,26 +1,21 @@
 package view;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import javax.swing.JOptionPane;
 import model.Tarefa;
 import model.Usuario;
-import java.sql.*;
+import model.Competencia;
+import java.sql.SQLException;
 import java.util.List;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
 
 public class DialogAdicionarResponsavel extends JDialog {
 
     private JTextField txtBuscar;
+    private JComboBox<Competencia> comboCompetencias;
     private JList<String> listResultados;
     private DefaultListModel<String> listModel;
     private JButton btnAdicionar, btnCancelar;
@@ -32,21 +27,47 @@ public class DialogAdicionarResponsavel extends JDialog {
         super(parent, "Adicionar Responsável", true);
         this.tarefa = tarefa;
 
-        setSize(400, 400);
+        setSize(500, 500);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout(10, 10));
 
-        JPanel panelBusca = new JPanel(new BorderLayout());
-        panelBusca.add(new JLabel("Buscar (nome ou email):"), BorderLayout.NORTH);
+        // Painel de busca e filtro
+        JPanel panelBusca = new JPanel();
+        panelBusca.setLayout(new BoxLayout(panelBusca, BoxLayout.Y_AXIS));
 
-        txtBuscar = new JTextField();
-        panelBusca.add(txtBuscar, BorderLayout.CENTER);
+        // Linha 1: Buscar
+        JPanel linha1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        linha1.add(new JLabel("Buscar (nome/email):"));
+        txtBuscar = new JTextField(15);
+        linha1.add(txtBuscar);
+
+        // Linha 2: Filtro por competência
+        JPanel linha2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        linha2.add(new JLabel("Filtrar por competência:"));
+        comboCompetencias = new JComboBox<>();
+        comboCompetencias.addItem(new Competencia(0, "Todas as competências"));
+
+        List<Competencia> todas = Competencia.buscarTodas();
+        System.out.println("Quantidade de competências carregadas: " + todas.size());
+        for (Competencia c : todas) {
+            System.out.println("Adicionando competência: " + c.getNome());
+            comboCompetencias.addItem(c);
+        }
+
+        linha2.add(comboCompetencias);
+
+        // Adiciona linhas ao painel principal de busca
+        panelBusca.add(linha1);
+        panelBusca.add(linha2);
+
         add(panelBusca, BorderLayout.NORTH);
 
+        // Lista de resultados
         listModel = new DefaultListModel<>();
         listResultados = new JList<>(listModel);
         add(new JScrollPane(listResultados), BorderLayout.CENTER);
 
+        // Botões
         JPanel botoes = new JPanel();
         btnAdicionar = new JButton("Adicionar");
         btnCancelar = new JButton("Cancelar");
@@ -55,33 +76,49 @@ public class DialogAdicionarResponsavel extends JDialog {
         add(botoes, BorderLayout.SOUTH);
 
         // Listeners
-        txtBuscar.getDocument().addDocumentListener(new DocumentListener() {
-            public void insertUpdate(DocumentEvent e) {
-                atualizarResultados();
+        txtBuscar.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                atualizarResultadosComTratamento();
             }
 
-            public void removeUpdate(DocumentEvent e) {
-                atualizarResultados();
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                atualizarResultadosComTratamento();
             }
 
-            public void changedUpdate(DocumentEvent e) {
-                atualizarResultados();
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                atualizarResultadosComTratamento();
             }
         });
+
+        comboCompetencias.addActionListener(e -> atualizarResultadosComTratamento());
 
         btnAdicionar.addActionListener(e -> adicionarResponsavel());
         btnCancelar.addActionListener(e -> dispose());
     }
 
-    private void atualizarResultados() {
+    private void atualizarResultadosComTratamento() {
+        try {
+            atualizarResultados();
+        } catch (SQLException ex) {
+            Logger.getLogger(DialogAdicionarResponsavel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void atualizarResultados() throws SQLException {
         String filtro = txtBuscar.getText().trim();
-        if (filtro.length() < 2) {
+        Competencia compSelecionada = (Competencia) comboCompetencias.getSelectedItem();
+
+        if (filtro.length() < 2 && (compSelecionada == null || compSelecionada.getId() == 0)) {
             listModel.clear();
             return;
         }
 
         Usuario usuarioDAO = new Usuario();
-        usuariosFiltrados = usuarioDAO.buscarUsuariosPorNomeOuEmail(filtro);
+        usuariosFiltrados = usuarioDAO.buscarUsuariosPorNomeEmailECompetencia(
+                filtro,
+                (compSelecionada != null && compSelecionada.getId() != 0) ? compSelecionada.getId() : null
+        );
+
         listModel.clear();
         for (Usuario u : usuariosFiltrados) {
             listModel.addElement(u.getNome() + " - " + u.getEmail());
@@ -97,13 +134,11 @@ public class DialogAdicionarResponsavel extends JDialog {
 
         Usuario selecionado = usuariosFiltrados.get(index);
         try {
-            // Verificar se o usuário já está como responsável
             if (tarefa.verificarUsuarioResponsavel(selecionado.getIdUsuario(), tarefa.getIdTarefa())) {
                 JOptionPane.showMessageDialog(this, "Usuário já é responsável por essa tarefa.");
                 return;
             }
 
-            // Verificar se o usuário está na equipe
             if (!tarefa.usuarioEstaNaEquipe(selecionado.getIdUsuario())) {
                 JOptionPane.showMessageDialog(this, "Usuário não faz parte da equipe desta tarefa.");
                 return;

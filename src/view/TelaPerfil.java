@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 
 import connection.Database;
@@ -26,6 +22,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.MessagingException;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
@@ -34,8 +31,9 @@ import utils.EmailSender;
 
 public class TelaPerfil extends javax.swing.JFrame {
 
-    private JPanel painelCompetencias = new JPanel();
-    private ArrayList<JCheckBox> checkboxesCompetencias = new ArrayList<>();
+    private DefaultListModel<String> modeloListaComp = new DefaultListModel<>();
+    private List<Competencia> todasCompetencias = new ArrayList<>();
+
     private Sistema sistema;
     private Usuario usuario;
 
@@ -91,6 +89,10 @@ public class TelaPerfil extends javax.swing.JFrame {
         btnVoltar = new javax.swing.JButton();
         lblCargo = new javax.swing.JLabel();
         btnExcluirConta = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        listCompetencias = new javax.swing.JList<>();
+        btnRemoverComp = new javax.swing.JButton();
+        btnAddComp = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -162,6 +164,30 @@ public class TelaPerfil extends javax.swing.JFrame {
             }
         });
         painelConteudo.add(btnExcluirConta, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 900, 380, 60));
+
+        listCompetencias.setBackground(new Color (0,0,0,0));
+        listCompetencias.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        listCompetencias.setFont(new java.awt.Font("Oswald Medium", 0, 22)); // NOI18N
+        listCompetencias.setOpaque(false);
+        jScrollPane2.setViewportView(listCompetencias);
+
+        painelConteudo.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 640, 380, 200));
+
+        btnRemoverComp.setText("Remover");
+        btnRemoverComp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverCompActionPerformed(evt);
+            }
+        });
+        painelConteudo.add(btnRemoverComp, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 760, 120, 50));
+
+        btnAddComp.setText("Adicionar");
+        btnAddComp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddCompActionPerformed(evt);
+            }
+        });
+        painelConteudo.add(btnAddComp, new org.netbeans.lib.awtextra.AbsoluteConstraints(950, 660, 120, 50));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/design/TelaPerfil.jpg"))); // NOI18N
         painelConteudo.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1440, -1));
@@ -296,6 +322,61 @@ public class TelaPerfil extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnTrocarEmailActionPerformed
 
+    private void btnAddCompActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddCompActionPerformed
+        // TODO add your handling code here:
+        Set<String> jaAdicionadas = new HashSet<>();
+        for (int i = 0; i < modeloListaComp.size(); i++) {
+            jaAdicionadas.add(modeloListaComp.getElementAt(i));
+        }
+
+        List<String> opcoesDisponiveis = new ArrayList<>();
+        for (Competencia c : todasCompetencias) {
+            if (!jaAdicionadas.contains(c.getNome())) {
+                opcoesDisponiveis.add(c.getNome());
+            }
+        }
+
+        if (opcoesDisponiveis.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todas as competências já foram adicionadas.");
+            return;
+        }
+
+        String selecionada = (String) JOptionPane.showInputDialog(
+                this,
+                "Selecione uma competência:",
+                "Adicionar Competência",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                opcoesDisponiveis.toArray(),
+                opcoesDisponiveis.get(0)
+        );
+
+        if (selecionada != null) {
+            modeloListaComp.addElement(selecionada);
+            salvarCompetenciasDoUsuario(usuario.getIdUsuario());
+        }
+    }//GEN-LAST:event_btnAddCompActionPerformed
+
+    private void btnRemoverCompActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverCompActionPerformed
+        // TODO add your handling code here:
+        String selecionada = listCompetencias.getSelectedValue();
+        if (selecionada != null) {
+            int opcao = JOptionPane.showConfirmDialog(
+                    this,
+                    "Deseja remover a competência: " + selecionada + "?",
+                    "Confirmar Remoção",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (opcao == JOptionPane.YES_OPTION) {
+                modeloListaComp.removeElement(selecionada);
+                salvarCompetenciasDoUsuario(usuario.getIdUsuario());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione uma competência para remover.");
+        }
+    }//GEN-LAST:event_btnRemoverCompActionPerformed
+
     private String solicitarNovaSenha() {
         String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$";
         while (true) {
@@ -314,58 +395,37 @@ public class TelaPerfil extends javax.swing.JFrame {
     }
 
     private void carregarCompetenciasDoUsuario(int idUsuario) {
-        painelCompetencias.removeAll();
-        painelCompetencias.setLayout(new javax.swing.BoxLayout(painelCompetencias, javax.swing.BoxLayout.Y_AXIS));
-
-        List<Competencia> todas = sistema.buscarTodasCompetencias();
+        modeloListaComp.clear();
+        todasCompetencias = sistema.buscarTodasCompetencias();
         List<Integer> competenciasDoUsuario = sistema.buscarCompetenciasPorUsuario(idUsuario);
 
-        for (Competencia c : todas) {
-            JCheckBox checkBox = new JCheckBox(c.getNome());
-            checkBox.putClientProperty("id_competencia", c.getId());
-            checkBox.setSelected(competenciasDoUsuario.contains(c.getId()));
-            painelCompetencias.add(checkBox);
-            checkboxesCompetencias.add(checkBox);
+        for (Competencia c : todasCompetencias) {
+            if (competenciasDoUsuario.contains(c.getId())) {
+                modeloListaComp.addElement(c.getNome());
+            }
         }
 
-        painelCompetencias.setPreferredSize(new Dimension(300, 200));
-        painelCompetencias.setBackground(Color.WHITE);
-        painelCompetencias.setVisible(true); // Garante que o painel esteja visível
-
-        painelConteudo.add(painelCompetencias, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 650, 300, 200));
-
-        painelCompetencias.revalidate();
-        painelCompetencias.repaint();
-
-        painelConteudo.revalidate();
-        painelConteudo.repaint();
+        listCompetencias.setModel(modeloListaComp);
     }
 
     private void salvarCompetenciasDoUsuario(int idUsuario) {
         try (Connection conn = Database.getConnection()) {
-            // Apagar antigas
-            PreparedStatement del = conn.prepareStatement(
-                    "DELETE FROM usuario_competencia WHERE id_usuario = ?"
-            );
+            PreparedStatement del = conn.prepareStatement("DELETE FROM usuario_competencia WHERE id_usuario = ?");
             del.setInt(1, idUsuario);
             del.executeUpdate();
 
-            // Inserir novas marcadas
-            PreparedStatement ins = conn.prepareStatement(
-                    "INSERT INTO usuario_competencia (id_usuario, id_competencia) VALUES (?, ?)"
-            );
-            for (JCheckBox cb : checkboxesCompetencias) {
-                Object idObj = cb.getClientProperty("id_competencia");
-                if (cb.isSelected() && idObj != null) {
-                    int idCompetencia = (int) idObj;
-                    ins.setInt(1, idUsuario);
-                    ins.setInt(2, idCompetencia);
-                    ins.addBatch();
+            PreparedStatement ins = conn.prepareStatement("INSERT INTO usuario_competencia (id_usuario, id_competencia) VALUES (?, ?)");
+            for (int i = 0; i < modeloListaComp.size(); i++) {
+                String nomeComp = modeloListaComp.getElementAt(i);
+                for (Competencia c : todasCompetencias) {
+                    if (c.getNome().equals(nomeComp)) {
+                        ins.setInt(1, idUsuario);
+                        ins.setInt(2, c.getId());
+                        ins.addBatch();
+                    }
                 }
             }
-
             ins.executeBatch();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -373,14 +433,18 @@ public class TelaPerfil extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddComp;
     private javax.swing.JButton btnEditarNome;
     private javax.swing.JButton btnExcluirConta;
     private javax.swing.JButton btnRedefinirSenha;
+    private javax.swing.JButton btnRemoverComp;
     private javax.swing.JButton btnTrocarEmail;
     private javax.swing.JButton btnVoltar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblCargo;
+    private javax.swing.JList<String> listCompetencias;
     private javax.swing.JPanel painelConteudo;
     private javax.swing.JLabel txtEmail;
     private javax.swing.JLabel txtNome;

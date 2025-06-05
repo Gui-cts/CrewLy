@@ -6,6 +6,7 @@ import controller.Sistema;
 import java.util.ArrayList;
 import java.util.List;
 import utils.HashUtil;
+import model.Competencia;
 
 public class Usuario {
 
@@ -154,6 +155,41 @@ public class Usuario {
             stmt.setInt(1, idUsuario);
             stmt.executeUpdate();
         }
+    }
+
+    public List<Usuario> buscarUsuariosPorNomeEmailECompetencia(String texto, Integer idCompetencia) throws SQLException {
+        List<Usuario> lista = new ArrayList<>();
+
+        String query = """
+        SELECT DISTINCT u.* FROM usuarios u
+        LEFT JOIN usuario_competencia uc ON u.id_usuario = uc.id_usuario
+        WHERE (u.nome LIKE ? OR u.email LIKE ?)
+    """;
+
+        if (idCompetencia != null) {
+            query += " AND uc.id_competencia = ?";
+        }
+
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, "%" + texto + "%");
+            stmt.setString(2, "%" + texto + "%");
+
+            if (idCompetencia != null) {
+                stmt.setInt(3, idCompetencia);
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Usuario u = new Usuario();
+                u.setIdUsuario(rs.getInt("id_usuario"));
+                u.setNome(rs.getString("nome"));
+                u.setEmail(rs.getString("email"));
+                // preencha outros campos se necessário
+                lista.add(u);
+            }
+        }
+
+        return lista;
     }
 
 }
