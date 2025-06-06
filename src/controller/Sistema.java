@@ -1,19 +1,19 @@
 package controller;
 
-import model.Usuario;
-import model.Equipe;
-import model.Tarefa;
+import model.entities.Usuario;
+import model.entities.Equipe;
+import model.entities.Tarefa;
 import utils.HashUtil;
 import utils.EmailSender;
 import utils.TokenUtil;
 import connection.Database;
 
-import dao.EquipeDAO;
-import dao.EquipeUsuarioDAO;
-import dao.TarefaDAO;
-import dao.TarefaResponsavelDAO;
-import dao.CompetenciaDAO;
-import dao.UsuarioCompetenciaDAO;
+import dao.impl.EquipeDAO;
+import dao.impl.EquipeUsuarioDAO;
+import dao.impl.TarefaDAO;
+import dao.impl.TarefaResponsavelDAO;
+import dao.impl.CompetenciaDAO;
+import dao.impl.UsuarioCompetenciaDAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.mail.MessagingException;
-import model.Competencia;
+import model.entities.Competencia;
 
 public class Sistema {
 
