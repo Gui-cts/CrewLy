@@ -54,6 +54,9 @@ public class TelaPerfil extends javax.swing.JFrame {
 
         lblCargo.setText("<html>Cargo: <span style='color:" + (usuario.getIdTipo() == 2 ? "red" : "green") + ";'>["
                 + (usuario.getIdTipo() == 2 ? "Lider" : "Funcionario") + "]</span></html>");
+        
+        carregarCompetenciasDoUsuario(usuario.getIdUsuario());
+
     }
 
     /**
