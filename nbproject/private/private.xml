@@ -5,15 +5,23 @@
         <group>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/TelaLogin.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/utils/HashUtil.java</file>
+            <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/dao/UsuarioCompetenciaDAO.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/model/Usuario.java</file>
+            <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/dao/EquipeUsuarioDAO.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/controller/Sistema.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/TelaCadastro.java</file>
+            <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/dao/EquipeDAO.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/MenuLider.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/utils/TokenUtil.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/model/Competencia.java</file>
+            <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/dao/TarefaDAO.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/connection/Database.java</file>
+            <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/dao/CompetenciaDAO.java</file>
+            <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/dao/TarefaResponsavelDAO.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/main/CrewLy.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/MenuFuncionario.java</file>
+            <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/DialogAdicionarResponsavel.java</file>
+            <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/design/TelaPerfil.jpg</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/view/TelaPerfil.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/utils/ImagemUtil.java</file>
             <file>file:/C:/Users/guico/OneDrive/Desktop/Faculdade/Programas/CrewLy/src/utils/EmailSender.java</file>

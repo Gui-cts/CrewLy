@@ -24,8 +24,6 @@ import java.util.List;
 import javax.mail.MessagingException;
 import model.Competencia;
 
-
-
 public class Sistema {
 
     private CompetenciaDAO competenciaDAO;
@@ -36,9 +34,9 @@ public class Sistema {
     private TarefaResponsavelDAO tarefaResponsavelDAO = new TarefaResponsavelDAO();
 
     public Sistema() {
-    this.competenciaDAO = new CompetenciaDAO();
-    this.usuarioCompetenciaDAO = new UsuarioCompetenciaDAO();
-}
+        this.competenciaDAO = new CompetenciaDAO();
+        this.usuarioCompetenciaDAO = new UsuarioCompetenciaDAO();
+    }
 
     // =================== EXISTENTES ====================
     public Usuario autenticarUsuario(String email, String senha) {
@@ -193,13 +191,18 @@ public class Sistema {
     public List<String> buscarCompetencias(int idUsuario) {
         List<String> competencias = new ArrayList<>();
 
-        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT nome FROM competencia WHERE id_usuario = ?")) {
+        String sql = "SELECT c.nome_competencia FROM competencia c "
+                + "JOIN usuario_competencia uc ON c.id_competencia = uc.id_competencia "
+                + "WHERE uc.id_usuario = ?";
+
+        try (Connection conn = Database.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, idUsuario);
-            ResultSet rs = stmt.executeQuery();
 
-            while (rs.next()) {
-                competencias.add(rs.getString("nome_competencia"));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    competencias.add(rs.getString("nome_competencia"));
+                }
             }
 
         } catch (SQLException e) {

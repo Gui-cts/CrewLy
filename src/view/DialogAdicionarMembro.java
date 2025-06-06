@@ -98,7 +98,7 @@ public class DialogAdicionarMembro extends JDialog {
         }
 
         String competenciaSelecionada = (String) comboCompetencias.getSelectedItem();
-        int idCompetencia = -1;
+        Integer idCompetencia = null;
 
         if (!"Todas as competências".equals(competenciaSelecionada)) {
             for (Competencia c : listaCompetencias) {
